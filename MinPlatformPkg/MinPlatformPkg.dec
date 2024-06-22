@@ -77,7 +77,6 @@
   TestPointCheckLib|Include/Library/TestPointCheckLib.h
 
   SetCacheMtrrLib|Include/Library/SetCacheMtrrLib.h
-
   ReportCpuHobLib|Include/Library/ReportCpuHobLib.h
 
   BoardBootManagerLib|Include/Library/BoardBootManagerLib.h
