@@ -10,3 +10,5 @@ flags:
     carryforward: true
   MinPlatformPkg:
     carryforward: true
+  IntelSiliconPkg:
+    carryforward: true

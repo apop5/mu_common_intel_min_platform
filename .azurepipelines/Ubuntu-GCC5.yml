@@ -34,3 +34,11 @@ extends:
         Pkgs: 'MinPlatformPkg'
         Targets: 'DEBUG,RELEASE,NO-TARGET,NOOPT'
         ArchList: $(arch_list)
+      TARGET_IntelSiliconPkg:
+        Pkgs: 'IntelSiliconPkg'
+        Targets: 'DEBUG,RELEASE,NO-TARGET,NOOPT'
+        ArchList: $(arch_list)
+      TARGET_BoardModulePkg:
+        Pkgs: 'BoardModulePkg'
+        Targets: 'DEBUG,RELEASE,NO-TARGET,NOOPT'
+        ArchList: $(arch_list)

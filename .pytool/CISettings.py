@@ -52,7 +52,8 @@ class Settings(CiSetupSettingsManager, CiBuildSettingsManager, UpdateSettingsMan
         These should be edk2 workspace relative paths '''
 
         return ("MinPlatformPkg",
-                "BoardModulePkg" )
+                "BoardModulePkg",
+                "IntelSiliconPkg")
 
     def GetArchitecturesSupported(self):
         ''' return iterable of edk2 architectures supported by this build '''
