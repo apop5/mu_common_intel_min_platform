@@ -607,7 +607,7 @@ TestPointCheckPciSpeed (
 
         Offset += OFFSET_OF (PCI_CAPABILITY_PCIEXP, LinkStatus);
         PciIoDev->Pci.Read (PciIoDev, EfiPciIoWidthUint16, Offset, 1, &PcieLinkStatusReg.Uint16);
-        DEBUG ((DEBUG_INFO, "[%a] LinkStatusReg = %04x\n", __FUNCTION__, PcieLinkStatusReg.Uint16));
+        DEBUG ((DEBUG_INFO, "[%a] LinkStatusReg = %04x\n", __func__, PcieLinkStatusReg.Uint16));
         if (PcieLinkStatusReg.Bits.CurrentLinkSpeed >= Devices[InnerLoop].MinimumLinkSpeed) {
           // If it matches, check it off in the parallel array
           DeviceFound[InnerLoop] = TRUE;
@@ -626,7 +626,7 @@ TestPointCheckPciSpeed (
       DEBUG ((
         DEBUG_INFO,
         "%a - %a not found. Expected Segment: %d  Bus: %d  Device: %d  Function: %d, MinimumLinkSpeed: %d\n",
-        __FUNCTION__,
+        __func__,
         Devices[OuterLoop].DeviceName,
         Devices[OuterLoop].SegmentNumber,
         Devices[OuterLoop].BusNumber,
