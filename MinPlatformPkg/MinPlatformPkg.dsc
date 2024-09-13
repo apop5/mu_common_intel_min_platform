@@ -85,13 +85,14 @@
   # MU_CHANGE [BEGIN] - Support platform level configuration testing
   PlatformConfigCheckLib|MinPlatformPkg/Test/Library/PlatformConfigCheckLibNull/PlatformConfigCheckLibNull.inf
   # MU_CHANGE [END]
-  NULL|MdePkg/Library/StackCheckLibNull/StackCheckLibNull.inf # MU_CHANGE: /GS and -fstack-protector support
   TestPointCheckLib|MinPlatformPkg/Test/Library/TestPointCheckLibNull/TestPointCheckLibNull.inf
   TestPointPciSpeedInfoLib|MinPlatformPkg/Library/TestPointPciSpeedInfoLibNull/TestPointPciSpeedInfoLibNull.inf
   TestPointMtrrInfoLib|MinPlatformPkg/Library/TestPointMtrrInfoLibNull/TestPointMtrrInfoLibNull.inf
 
 [LibraryClasses.common.SEC]
   TestPointCheckLib|MinPlatformPkg/Test/Library/TestPointCheckLib/SecTestPointCheckLib.inf
+  # This has SEC modules with standard entry points, so we can generically link StackCheckLib
+  NULL|MdePkg/Library/StackCheckLibNull/StackCheckLibNull.inf
 
 [LibraryClasses.common.PEIM]
   #
