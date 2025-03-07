@@ -15,35 +15,29 @@ It is organized so that common code can be made available to any platform with m
 
 This repository is part of Project Mu.  Please see Project Mu for details https://microsoft.github.io/mu
 
-Branch Status - release/202411
+Branch Status - release/202502
 ==============================
 
 :Status:
   In Development
 
 :Entered Development:
-  Dec 2024
+  2025/02/21 (Date Edk2 started accepting changes which were not in a previous release)
 
 :Anticipated Stabilization:
   May 2025
 
-Branch Changes - release/202411
-===============================
 
 Breaking Changes-dev
 --------------------
 
-- Incomplete
-
 Main Changes-dev
 ----------------
-
-- Incomplete
-
-Bug Fixes-dev
--------------
-
-- Incomplete
+- BoardModulePkg: Added Mock library for BiosIdLib.
+- BoardModulePkg: Add Standalone Mm BiosIdLib.
+- MinPlatformPkg: Make PlatformInitPreMem independent to IntelSiliconPkg and IntelFsp2WrapperPkg.
+- MinPlatformPkg SerialPortTerminalLib: Fixing CodeQL issue Pointless Comparison.
+- MinPlatformPkg: Add new MTRR Test Point test.
 
 2405_Rebase Changes
 -------------------
