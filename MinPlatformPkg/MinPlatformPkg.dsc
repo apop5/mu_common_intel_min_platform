@@ -121,6 +121,7 @@
   TestPointCheckLib|MinPlatformPkg/Test/Library/TestPointCheckLib/StandaloneMmTestPointCheckLib.inf
   TestPointLib|MinPlatformPkg/Test/Library/TestPointLib/StandaloneMmTestPointLib.inf
   MemLib|StandaloneMmPkg/Library/StandaloneMmMemLib/StandaloneMmMemLib.inf
+  DevicePathLib|MdePkg/Library/UefiDevicePathLib/UefiDevicePathLibBase.inf # MU_CHANGE - Use Base version to prevent gBS inclusion
 
 ###################################################################################################
 #
