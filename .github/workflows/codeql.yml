@@ -38,6 +38,7 @@ on:
     paths-ignore:
       - '!**.c'
       - '!**.h'
+  workflow_dispatch:
 
 jobs:
   gather_packages:
