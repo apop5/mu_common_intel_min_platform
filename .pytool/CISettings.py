@@ -179,13 +179,15 @@ class Settings(CiSetupSettingsManager, CiBuildSettingsManager, UpdateSettingsMan
             Branch: <optional> Branch to checkout (will checkout most recent commit in branch)
             Full: <optional> Boolean to do shallow or Full checkout.  (default is False)
             ReferencePath: <optional> Workspace relative path to git repo to use as "reference"
+            Depth: <optional> Depth of recursive clone.  (default is 5)
         }
         '''
         return [
             {
                 "Path": "Common/MU_TIANO",
                 "Url": "https://github.com/microsoft/mu_tiano_plus.git",
-                "Branch": "dev/202502"
+                "Branch": "dev/202502",
+                "Depth": "2"
             },
             {
                 "Path": "MU_BASECORE",
@@ -214,3 +216,7 @@ class Settings(CiSetupSettingsManager, CiBuildSettingsManager, UpdateSettingsMan
     def FilterPackagesToTest(self, changedFilesList: list, potentialPackagesList: list) -> list:
         ''' Filter potential packages to test based on changed files. '''
         return []
+
+    def GetLoggingLevel(self, loggerType):
+        return logging.DEBUG
+    
