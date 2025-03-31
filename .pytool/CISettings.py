@@ -187,7 +187,7 @@ class Settings(CiSetupSettingsManager, CiBuildSettingsManager, UpdateSettingsMan
                 "Path": "Common/MU_TIANO",
                 "Url": "https://github.com/microsoft/mu_tiano_plus.git",
                 "Branch": "dev/202502",
-                "Depth": "2"
+                "Depth": "0"
             },
             {
                 "Path": "MU_BASECORE",
@@ -218,5 +218,5 @@ class Settings(CiSetupSettingsManager, CiBuildSettingsManager, UpdateSettingsMan
         return []
 
     def GetLoggingLevel(self, loggerType):
-        return logging.DEBUG
+        return logging.INFO
     
