@@ -180,6 +180,9 @@ class Settings(CiSetupSettingsManager, CiBuildSettingsManager, UpdateSettingsMan
             Full: <optional> Boolean to do shallow or Full checkout.  (default is False)
             ReferencePath: <optional> Workspace relative path to git repo to use as "reference"
             Depth: <optional> Depth of recursive clone.  (default is 5)
+            CIFile: <optional> If does not exist, full recursive clone with submodules.
+                    If empty string, no submodules will be cloned.
+                    If a valid CI Settings file, only the submodules in that file will be cloned.
         }
         '''
         return [
@@ -187,7 +190,7 @@ class Settings(CiSetupSettingsManager, CiBuildSettingsManager, UpdateSettingsMan
                 "Path": "Common/MU_TIANO",
                 "Url": "https://github.com/microsoft/mu_tiano_plus.git",
                 "Branch": "dev/202502",
-                "Recursive": False,
+                "CIFile": ".pytool/CISettings.py",
             },
             {
                 "Path": "MU_BASECORE",
