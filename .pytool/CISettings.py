@@ -190,7 +190,7 @@ class Settings(CiSetupSettingsManager, CiBuildSettingsManager, UpdateSettingsMan
                 "Path": "Common/MU_TIANO",
                 "Url": "https://github.com/microsoft/mu_tiano_plus.git",
                 "Branch": "dev/202502",
-                "CIFile": ".pytool/CISettings.py",
+                "Recurse" {"CIFile": ".pytool/CISettings.py"},
             },
             {
                 "Path": "MU_BASECORE",
