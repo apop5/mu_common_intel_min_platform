@@ -179,7 +179,7 @@ class Settings(CiSetupSettingsManager, CiBuildSettingsManager, UpdateSettingsMan
             Branch: <optional> Branch to checkout (will checkout most recent commit in branch)
             Full: <optional> Boolean to do shallow or Full checkout.  (default is False)
             ReferencePath: <optional> Workspace relative path to git repo to use as "reference"
-            Recurse: <optional> Specifies if Dependency shoudl be recursively cloned.
+            Recurse: <optional> Specifies if Dependency should be recursively cloned.
         }
         '''
         return [
