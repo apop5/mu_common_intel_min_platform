@@ -20,6 +20,7 @@
 
 [LibraryClasses]
   BaseLib
+  CpuLib
   DebugLib
   MmServicesTableLib
   MemoryAllocationLib
