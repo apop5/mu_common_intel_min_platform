@@ -15,43 +15,32 @@ It is organized so that common code can be made available to any platform with m
 
 This repository is part of Project Mu.  Please see Project Mu for details https://microsoft.github.io/mu
 
-Branch Status - release/202502
+Branch Status - release/202511
 ==============================
 
 :Status:
   In Development
 
 :Entered Development:
-  2025/02/21 (Date Edk2 started accepting changes which were not in a previous release)
+  2025/11/22 (Date Edk2 started accepting changes which were not in a previous release)
 
 :Anticipated Stabilization:
-  May 2025
-
+  May 2026
 
 Breaking Changes-dev
 --------------------
 
 Main Changes-dev
 ----------------
-- BoardModulePkg: Added Mock library for BiosIdLib.
-- BoardModulePkg: Add Standalone Mm BiosIdLib.
-- MinPlatformPkg: Make PlatformInitPreMem independent to IntelSiliconPkg and IntelFsp2WrapperPkg.
-- MinPlatformPkg SerialPortTerminalLib: Fixing CodeQL issue Pointless Comparison.
-- MinPlatformPkg: Add new MTRR Test Point test.
 
-2405_Rebase Changes
+- IntelSiliconPkg has been moved into this repo. This helps eliminate the mu_silicon_intel_tiano dependency.
+- CI has been changed to only require mu_basecore submoudle. 
+
+2511_Rebase Changes
 -------------------
 
-| Starting commit: 39bdf607 ("pip: bump edk2-pytool-library from 0.21.8 to 0.21.9", 2024-07-31)
-| Destination commit: TBD
+| Starting commit: 288c97a ("IntelSiliconPkg: Add INDEX_TPM_ADDRESS to FIT Record A", 2026-01-31)
 
-Repo Maintenance
-================
-
-Upstream Sync Details
----------------------
-
-- edk2_platforms - a912d9fcf7 ("edk2-platform/maintainer: Add entries for AMD packages", 2024-05-23)
 
 Instructions
 ------------
@@ -154,12 +143,12 @@ POSSIBILITY OF SUCH DAMAGE.
 
 .. CoreCI
 
-.. _Windows_VS2022: https://dev.azure.com/projectmu/mu/_build/latest?definitionId=71&&branchName=release%2F202411
-.. |WindowsCiBuild| image:: https://dev.azure.com/projectmu/mu/_apis/build/status/CI/Mu%20Common%20Intel%20MinPlatform%20CI%20VS2022?branchName=release%2F202411
+.. _Windows_VS2022: https://dev.azure.com/projectmu/mu/_build/latest?definitionId=71&&branchName=release%2F202511
+.. |WindowsCiBuild| image:: https://dev.azure.com/projectmu/mu/_apis/build/status/CI/Mu%20Common%20Intel%20MinPlatform%20CI%20VS2022?branchName=release%2F202511
 .. |WindowsCiTest| image:: https://img.shields.io/azure-devops/tests/projectmu/mu/71.svg
 .. |WindowsCiCoverage| image:: https://img.shields.io/badge/coverage-coming_soon-blue
 
-.. _Ubuntu_GCC5: https://dev.azure.com/projectmu/mu/_build/latest?definitionId=72&branchName=release%2F202411
-.. |UbuntuCiBuild| image:: https://dev.azure.com/projectmu/mu/_apis/build/status/CI/Mu%20Common%20Intel%20MinPlatform%20CI%20Ubuntu%20GCC5?branchName=release%2F202411
+.. _Ubuntu_GCC5: https://dev.azure.com/projectmu/mu/_build/latest?definitionId=72&branchName=release%2F202511
+.. |UbuntuCiBuild| image:: https://dev.azure.com/projectmu/mu/_apis/build/status/CI/Mu%20Common%20Intel%20MinPlatform%20CI%20Ubuntu%20GCC5?branchName=release%2F202511
 .. |UbuntuCiTest| image:: https://img.shields.io/azure-devops/tests/projectmu/mu/72.svg
 .. |UbuntuCiCoverage| image:: https://img.shields.io/badge/coverage-coming_soon-blue
