@@ -18,18 +18,18 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 
 // CMOS access Port address
 
-#define PORT_70            0x70
-#define PORT_71            0x71
-#define PORT_72            0x72
-#define PORT_73            0x73
+#define PORT_70  0x70
+#define PORT_71  0x71
+#define PORT_72  0x72
+#define PORT_73  0x73
 
-#define CMOS_BANK0_LIMIT   0x7F
-#define CMOS_BANK1_LIMIT   0xFF
+#define CMOS_BANK0_LIMIT  0x7F
+#define CMOS_BANK1_LIMIT  0xFF
 
 typedef struct {
-   UINT8  Length;
-   UINT8  LowByteAddress;
-   UINT8  HighByteAddress;
+  UINT8    Length;
+  UINT8    LowByteAddress;
+  UINT8    HighByteAddress;
 } CMOS_CHECKSUM_LOCATION_INFO;
 
 #endif // _CMOS_ACCESS_LIB_INTERNALS_

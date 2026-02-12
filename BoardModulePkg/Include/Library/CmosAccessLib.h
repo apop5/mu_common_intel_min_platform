@@ -19,7 +19,7 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 UINT8
 EFIAPI
 CmosRead8 (
-  IN  UINT8 Address
+  IN  UINT8  Address
   );
 
 /**
@@ -31,8 +31,8 @@ CmosRead8 (
 VOID
 EFIAPI
 CmosWrite8 (
-  IN UINT8 Address,
-  IN UINT8 Data
+  IN UINT8  Address,
+  IN UINT8  Data
   );
 
 /**
@@ -57,8 +57,8 @@ CmosRead16 (
 VOID
 EFIAPI
 CmosWrite16 (
-  IN UINT8  Address,
-  IN UINT16 Data
+  IN UINT8   Address,
+  IN UINT16  Data
   );
 
 /**
@@ -83,8 +83,8 @@ CmosRead32 (
 VOID
 EFIAPI
 CmosWrite32 (
-  IN UINT8  Address,
-  IN UINT32 Data
+  IN UINT8   Address,
+  IN UINT32  Data
   );
 
 /**
@@ -100,7 +100,7 @@ CmosWrite32 (
 BOOLEAN
 EFIAPI
 CmosInit (
-  IN  BOOLEAN     Force
+  IN  BOOLEAN  Force
   );
 
 #endif // _CMOS_ACCESS_LIB_H_

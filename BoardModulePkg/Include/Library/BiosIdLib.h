@@ -30,7 +30,7 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 EFI_STATUS
 EFIAPI
 GetBiosId (
-  OUT BIOS_ID_IMAGE     *BiosIdImage OPTIONAL
+  OUT BIOS_ID_IMAGE  *BiosIdImage OPTIONAL
   );
 
 /**
@@ -48,10 +48,9 @@ GetBiosId (
 EFI_STATUS
 EFIAPI
 GetBiosVersionDateTime (
-  OUT CHAR16    *BiosVersion, OPTIONAL
+  OUT CHAR16 *BiosVersion, OPTIONAL
   OUT CHAR16    *BiosReleaseDate, OPTIONAL
   OUT CHAR16    *BiosReleaseTime OPTIONAL
   );
 
 #endif
-

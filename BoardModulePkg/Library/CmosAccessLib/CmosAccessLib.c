@@ -19,12 +19,12 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 **/
 CMOS_ENTRY *
 CmosAccessLibLocateEntry (
-  IN UINT8      Address
+  IN UINT8  Address
   )
 {
-  UINTN              Index;
-  UINTN              Count;
-  CMOS_ENTRY         *Entries;
+  UINTN       Index;
+  UINTN       Count;
+  CMOS_ENTRY  *Entries;
 
   Entries = PlatformCmosGetEntry (&Count);
   for (Index = 0; Index < Count; Index++) {
@@ -53,11 +53,11 @@ CmosAccessLibLocateEntry (
 **/
 BOOLEAN
 CmosAccessLibCheckAttribute (
-  IN UINT8      Address,
-  IN UINT8      Attributes,
-  IN BOOLEAN    ValueIfSet,
-  IN BOOLEAN    DefaultValue,
-  IN CMOS_ENTRY *Entry        OPTIONAL
+  IN UINT8       Address,
+  IN UINT8       Attributes,
+  IN BOOLEAN     ValueIfSet,
+  IN BOOLEAN     DefaultValue,
+  IN CMOS_ENTRY  *Entry        OPTIONAL
   )
 {
   if (Entry != NULL) {
@@ -89,7 +89,6 @@ CmosAccessLibNeedChecksum (
 {
   return CmosAccessLibCheckAttribute (Address, CMOS_EXCLUDE_FROM_CHECKSUM, FALSE, FALSE, Entry);
 }
-
 
 /**
   Check if the CMOS address needs to fill default data.
@@ -130,6 +129,7 @@ CmosAccessLibIsAccessible (
   if (Address <= 0xD) {
     return FALSE;
   }
+
   return CmosAccessLibCheckAttribute (Address, CMOS_EXCLUDE_FROM_ACCESS, FALSE, TRUE, Entry);
 }
 
@@ -140,12 +140,12 @@ CmosAccessLibIsAccessible (
 **/
 VOID
 CmosAccessLibGetChecksumLocation (
-  OUT CMOS_CHECKSUM_LOCATION_INFO *Location
+  OUT CMOS_CHECKSUM_LOCATION_INFO  *Location
   )
 {
-  UINTN                       Index;
-  UINTN                       Count;
-  CMOS_ENTRY                  *Entries;
+  UINTN       Index;
+  UINTN       Count;
+  CMOS_ENTRY  *Entries;
 
   Location->Length = 0;
 
@@ -174,19 +174,19 @@ CmosAccessLibGetChecksumLocation (
 **/
 UINT16
 CmosAccessLibCalculateSum (
-  IN CMOS_CHECKSUM_LOCATION_INFO *Location
+  IN CMOS_CHECKSUM_LOCATION_INFO  *Location
   )
 {
-  UINT16                      Sum;
-  UINTN                       Index;
-  UINTN                       Count;
-  CMOS_ENTRY                  *Entries;
+  UINT16      Sum;
+  UINTN       Index;
+  UINTN       Count;
+  CMOS_ENTRY  *Entries;
 
   if (Location->Length == 0) {
     return 0;
   }
 
-  Sum = 0;
+  Sum     = 0;
   Entries = PlatformCmosGetEntry (&Count);
   for (Index = 0; Index < Count; Index++) {
     if (CmosAccessLibNeedChecksum (Entries[Index].Address, &Entries[Index])) {
@@ -195,7 +195,7 @@ CmosAccessLibCalculateSum (
   }
 
   if (Location->Length == 1) {
-    return (UINT8) Sum;
+    return (UINT8)Sum;
   } else {
     return Sum;
   }
@@ -210,29 +210,29 @@ CmosAccessLibCalculateSum (
 **/
 UINT16
 CmosAccessLibReadChecksum (
-  IN CMOS_CHECKSUM_LOCATION_INFO *Location
+  IN CMOS_CHECKSUM_LOCATION_INFO  *Location
   )
 {
-  UINT16                      Checksum;
+  UINT16  Checksum;
 
   Checksum = 0;
 
   switch (Location->Length) {
-  case 2:
-    Checksum = (CmosRead8 (Location->HighByteAddress) << 8);
+    case 2:
+      Checksum = (CmosRead8 (Location->HighByteAddress) << 8);
     //
     // Fall to case 1 to get the low byte value
     //
-  case 1:
-    Checksum += CmosRead8 (Location->LowByteAddress);
-    break;
+    case 1:
+      Checksum += CmosRead8 (Location->LowByteAddress);
+      break;
 
-  default:
-    break;
+    default:
+      break;
   }
+
   return Checksum;
 }
-
 
 /**
   Write the Checksum to appropriate address.
@@ -242,22 +242,21 @@ CmosAccessLibReadChecksum (
 **/
 VOID
 CmosAccessLibWriteChecksum (
-  CMOS_CHECKSUM_LOCATION_INFO *Location,
-  IN UINT16                   Checksum
+  CMOS_CHECKSUM_LOCATION_INFO  *Location,
+  IN UINT16                    Checksum
   )
 {
-
   switch (Location->Length) {
-  case 0:
-    break;
-  case 2:
-    CmosWrite8 (Location->HighByteAddress, Checksum >> 8);
+    case 0:
+      break;
+    case 2:
+      CmosWrite8 (Location->HighByteAddress, Checksum >> 8);
     //
     // Fall to case 1 to update low byte value
     //
-  case 1:
-    CmosWrite8 (Location->LowByteAddress, (UINT8) Checksum);
-    break;
+    case 1:
+      CmosWrite8 (Location->LowByteAddress, (UINT8)Checksum);
+      break;
   }
 }
 
@@ -271,7 +270,7 @@ CmosAccessLibWriteChecksum (
 UINT8
 EFIAPI
 CmosRead8 (
-  IN  UINT8 Address
+  IN  UINT8  Address
   )
 {
   if (!CmosAccessLibIsAccessible (Address, CmosAccessLibLocateEntry (Address))) {
@@ -282,6 +281,7 @@ CmosRead8 (
     if (PlatformCmosGetNmiState ()) {
       Address |= BIT7;
     }
+
     IoWrite8 (PORT_70, Address);
     return IoRead8 (PORT_71);
   } else {
@@ -300,14 +300,15 @@ CmosRead8 (
 **/
 VOID
 CmosAccessLibICmosWrite8 (
-  IN UINT8 Address,
-  IN UINT8 Data
+  IN UINT8  Address,
+  IN UINT8  Data
   )
 {
   if (Address <= CMOS_BANK0_LIMIT) {
     if (PlatformCmosGetNmiState ()) {
       Address |= BIT7;
     }
+
     IoWrite8 (PORT_70, Address);
     IoWrite8 (PORT_71, Data);
   } else {
@@ -325,13 +326,13 @@ CmosAccessLibICmosWrite8 (
 VOID
 EFIAPI
 CmosWrite8 (
-  IN UINT8 Address,
-  IN UINT8 Data
+  IN UINT8  Address,
+  IN UINT8  Data
   )
 {
-  UINT8                       OriginalData;
-  CMOS_ENTRY                  *Entry;
-  CMOS_CHECKSUM_LOCATION_INFO ChecksumLocation;
+  UINT8                        OriginalData;
+  CMOS_ENTRY                   *Entry;
+  CMOS_CHECKSUM_LOCATION_INFO  ChecksumLocation;
 
   Entry = CmosAccessLibLocateEntry (Address);
 
@@ -382,12 +383,12 @@ CmosRead16 (
 VOID
 EFIAPI
 CmosWrite16 (
-  IN UINT8  Address,
-  IN UINT16 Data
+  IN UINT8   Address,
+  IN UINT16  Data
   )
 {
-  CmosWrite8 (Address, (UINT8) Data);
-  CmosWrite8 (Address + 1, (UINT8) (Data >> 8));
+  CmosWrite8 (Address, (UINT8)Data);
+  CmosWrite8 (Address + 1, (UINT8)(Data >> 8));
 }
 
 /**
@@ -415,14 +416,13 @@ CmosRead32 (
 VOID
 EFIAPI
 CmosWrite32 (
-  IN UINT8  Address,
-  IN UINT32 Data
+  IN UINT8   Address,
+  IN UINT32  Data
   )
 {
-  CmosWrite16 (Address, (UINT16) Data);
-  CmosWrite16 (Address + 2, (UINT16) (Data >> 16));
+  CmosWrite16 (Address, (UINT16)Data);
+  CmosWrite16 (Address + 2, (UINT16)(Data >> 16));
 }
-
 
 /**
   Initialize the CMOS.
@@ -437,13 +437,13 @@ CmosWrite32 (
 BOOLEAN
 EFIAPI
 CmosInit (
-  IN  BOOLEAN     Force
+  IN  BOOLEAN  Force
   )
 {
-  UINTN                       Address;
-  CMOS_ENTRY                  *Entry;
-  CMOS_CHECKSUM_LOCATION_INFO ChecksumLocation;
-  UINT16                      Checksum;
+  UINTN                        Address;
+  CMOS_ENTRY                   *Entry;
+  CMOS_CHECKSUM_LOCATION_INFO  ChecksumLocation;
+  UINT16                       Checksum;
 
   CmosAccessLibGetChecksumLocation (&ChecksumLocation);
 
@@ -453,7 +453,7 @@ CmosInit (
     //
     Checksum = CmosAccessLibCalculateSum (&ChecksumLocation) + CmosAccessLibReadChecksum (&ChecksumLocation);
     if (ChecksumLocation.Length == 1) {
-      Checksum = (UINT8) Checksum;
+      Checksum = (UINT8)Checksum;
     }
 
     if (Checksum != 0) {
@@ -466,9 +466,9 @@ CmosInit (
     // Traverse through entire CMOS location and fill it with zero
     //
     for (Address = 0; Address <= CMOS_BANK1_LIMIT; Address++) {
-      Entry = CmosAccessLibLocateEntry ((UINT8) Address);
-      if (CmosAccessLibNeedFillDefault ((UINT8) Address, Entry)) {
-        CmosAccessLibICmosWrite8 ((UINT8) Address, (Entry == NULL) ? CMOS_DEFAULT_VALUE : Entry->DefaultValue);
+      Entry = CmosAccessLibLocateEntry ((UINT8)Address);
+      if (CmosAccessLibNeedFillDefault ((UINT8)Address, Entry)) {
+        CmosAccessLibICmosWrite8 ((UINT8)Address, (Entry == NULL) ? CMOS_DEFAULT_VALUE : Entry->DefaultValue);
       }
     }
 
@@ -477,7 +477,7 @@ CmosInit (
     //
     CmosAccessLibWriteChecksum (
       &ChecksumLocation,
-      (UINT16) (0x10000 - CmosAccessLibCalculateSum (&ChecksumLocation))
+      (UINT16)(0x10000 - CmosAccessLibCalculateSum (&ChecksumLocation))
       );
     return TRUE;
   }

@@ -19,7 +19,7 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 CMOS_ENTRY *
 EFIAPI
 PlatformCmosGetEntry (
-  OUT UINTN       *EntryCount
+  OUT UINTN  *EntryCount
   )
 {
   *EntryCount = 0;

@@ -11,7 +11,7 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 
 #include <Pi/PiHob.h>
 
-extern EFI_GUID gBiosIdGuid;
+extern EFI_GUID  gBiosIdGuid;
 
 //
 // $(BOARD_ID)$(BOARD_REV).$(BOARD_EXT).$(VERSION_MAJOR).$(BUILD_TYPE)$(VERSION_MINOR).YYMMDDHHMM
@@ -46,9 +46,8 @@ typedef struct {
 #pragma pack()
 
 typedef struct {
-  EFI_HOB_GUID_TYPE GuidType;
-  BIOS_ID_IMAGE     BiosIdImage;
+  EFI_HOB_GUID_TYPE    GuidType;
+  BIOS_ID_IMAGE        BiosIdImage;
 } BIOS_ID_HOB;
 
 #endif
-
