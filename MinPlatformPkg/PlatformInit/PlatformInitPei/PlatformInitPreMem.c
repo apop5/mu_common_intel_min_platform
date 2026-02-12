@@ -34,17 +34,17 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 EFI_STATUS
 EFIAPI
 MemoryDiscoveredPpiNotifyCallback (
-  IN CONST EFI_PEI_SERVICES      **PeiServices,
-  IN EFI_PEI_NOTIFY_DESCRIPTOR   *NotifyDescriptor,
-  IN VOID                        *Ppi
+  IN CONST EFI_PEI_SERVICES     **PeiServices,
+  IN EFI_PEI_NOTIFY_DESCRIPTOR  *NotifyDescriptor,
+  IN VOID                       *Ppi
   );
 
 EFI_STATUS
 EFIAPI
 GetPlatformMemorySize (
-  IN      EFI_PEI_SERVICES                       **PeiServices,
-  IN      PEI_PLATFORM_MEMORY_SIZE_PPI           *This,
-  IN OUT  UINT64                                 *MemorySize
+  IN      EFI_PEI_SERVICES              **PeiServices,
+  IN      PEI_PLATFORM_MEMORY_SIZE_PPI  *This,
+  IN OUT  UINT64                        *MemorySize
   );
 
 UINT8
@@ -71,12 +71,12 @@ FspGetModeSelection (
 EFI_STATUS
 EFIAPI
 BaseMemoryTest (
-  IN  EFI_PEI_SERVICES                   **PeiServices,
-  IN  PEI_BASE_MEMORY_TEST_PPI           *This,
-  IN  EFI_PHYSICAL_ADDRESS               BeginAddress,
-  IN  UINT64                             MemoryLength,
-  IN  PEI_MEMORY_TEST_OP                 Operation,
-  OUT EFI_PHYSICAL_ADDRESS               *ErrorAddress
+  IN  EFI_PEI_SERVICES          **PeiServices,
+  IN  PEI_BASE_MEMORY_TEST_PPI  *This,
+  IN  EFI_PHYSICAL_ADDRESS      BeginAddress,
+  IN  UINT64                    MemoryLength,
+  IN  PEI_MEMORY_TEST_OP        Operation,
+  OUT EFI_PHYSICAL_ADDRESS      *ErrorAddress
   );
 
 /**
@@ -103,29 +103,29 @@ PlatformInitAfterTempRamExit (
   VOID
   );
 
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_PEI_NOTIFY_DESCRIPTOR mMemDiscoveredNotifyList = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_PEI_NOTIFY_DESCRIPTOR  mMemDiscoveredNotifyList = {
   (EFI_PEI_PPI_DESCRIPTOR_NOTIFY_CALLBACK | EFI_PEI_PPI_DESCRIPTOR_TERMINATE_LIST),
   &gEfiPeiMemoryDiscoveredPpiGuid,
-  (EFI_PEIM_NOTIFY_ENTRY_POINT) MemoryDiscoveredPpiNotifyCallback
+  (EFI_PEIM_NOTIFY_ENTRY_POINT)MemoryDiscoveredPpiNotifyCallback
 };
 
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_PEI_PPI_DESCRIPTOR mPpiListRecoveryBootMode = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_PEI_PPI_DESCRIPTOR  mPpiListRecoveryBootMode = {
   (EFI_PEI_PPI_DESCRIPTOR_PPI | EFI_PEI_PPI_DESCRIPTOR_TERMINATE_LIST),
   &gEfiPeiBootInRecoveryModePpiGuid,
   NULL
 };
 
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_PEI_PPI_DESCRIPTOR mPpiBootMode = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_PEI_PPI_DESCRIPTOR  mPpiBootMode = {
   (EFI_PEI_PPI_DESCRIPTOR_PPI | EFI_PEI_PPI_DESCRIPTOR_TERMINATE_LIST),
   &gEfiPeiMasterBootModePpiGuid,
   NULL
 };
 
-GLOBAL_REMOVE_IF_UNREFERENCED PEI_BASE_MEMORY_TEST_PPI     mPeiBaseMemoryTestPpi = { BaseMemoryTest };
+GLOBAL_REMOVE_IF_UNREFERENCED PEI_BASE_MEMORY_TEST_PPI  mPeiBaseMemoryTestPpi = { BaseMemoryTest };
 
-GLOBAL_REMOVE_IF_UNREFERENCED PEI_PLATFORM_MEMORY_SIZE_PPI mMemoryMemorySizePpi  = { GetPlatformMemorySize };
+GLOBAL_REMOVE_IF_UNREFERENCED PEI_PLATFORM_MEMORY_SIZE_PPI  mMemoryMemorySizePpi = { GetPlatformMemorySize };
 
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_PEI_PPI_DESCRIPTOR       mMemPpiList[] = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_PEI_PPI_DESCRIPTOR  mMemPpiList[] = {
   {
     EFI_PEI_PPI_DESCRIPTOR_PPI,
     &gPeiBaseMemoryTestPpiGuid,
@@ -138,12 +138,12 @@ GLOBAL_REMOVE_IF_UNREFERENCED EFI_PEI_PPI_DESCRIPTOR       mMemPpiList[] = {
   },
 };
 
-GLOBAL_REMOVE_IF_UNREFERENCED PLATFORM_INIT_TEMP_RAM_EXIT_PPI mPlatformInitTempRamExitPpi = {
+GLOBAL_REMOVE_IF_UNREFERENCED PLATFORM_INIT_TEMP_RAM_EXIT_PPI  mPlatformInitTempRamExitPpi = {
   PlatformInitBeforeTempRamExit,
   PlatformInitAfterTempRamExit
 };
 
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_PEI_PPI_DESCRIPTOR mPlatformInitTempRamExitPpiDesc = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_PEI_PPI_DESCRIPTOR  mPlatformInitTempRamExitPpiDesc = {
   (EFI_PEI_PPI_DESCRIPTOR_PPI | EFI_PEI_PPI_DESCRIPTOR_TERMINATE_LIST),
   &gPlatformInitTempRamExitPpiGuid,
   &mPlatformInitTempRamExitPpi
@@ -153,13 +153,13 @@ GLOBAL_REMOVE_IF_UNREFERENCED EFI_PEI_PPI_DESCRIPTOR mPlatformInitTempRamExitPpi
 /// Memory Reserved should be between 125% to 150% of the Current required memory
 /// otherwise BdsMisc.c would do a reset to make it 125% to avoid s4 resume issues.
 ///
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_MEMORY_TYPE_INFORMATION mDefaultMemoryTypeInformation[] = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_MEMORY_TYPE_INFORMATION  mDefaultMemoryTypeInformation[] = {
   { EfiACPIReclaimMemory,   FixedPcdGet32 (PcdPlatformEfiAcpiReclaimMemorySize) },  // ASL
-  { EfiACPIMemoryNVS,       FixedPcdGet32 (PcdPlatformEfiAcpiNvsMemorySize) },      // ACPI NVS (including S3 related)
-  { EfiReservedMemoryType,  FixedPcdGet32 (PcdPlatformEfiReservedMemorySize) },     // BIOS Reserved (including S3 related)
-  { EfiRuntimeServicesData, FixedPcdGet32 (PcdPlatformEfiRtDataMemorySize) },       // Runtime Service Data
-  { EfiRuntimeServicesCode, FixedPcdGet32 (PcdPlatformEfiRtCodeMemorySize) },       // Runtime Service Code
-  { EfiMaxMemoryType, 0 }
+  { EfiACPIMemoryNVS,       FixedPcdGet32 (PcdPlatformEfiAcpiNvsMemorySize)     },  // ACPI NVS (including S3 related)
+  { EfiReservedMemoryType,  FixedPcdGet32 (PcdPlatformEfiReservedMemorySize)    },  // BIOS Reserved (including S3 related)
+  { EfiRuntimeServicesData, FixedPcdGet32 (PcdPlatformEfiRtDataMemorySize)      },  // Runtime Service Data
+  { EfiRuntimeServicesCode, FixedPcdGet32 (PcdPlatformEfiRtCodeMemorySize)      },  // Runtime Service Code
+  { EfiMaxMemoryType,       0                                                   }
 };
 
 VOID
@@ -167,11 +167,11 @@ BuildMemoryTypeInformation (
   VOID
   )
 {
-  EFI_STATUS                      Status;
-  EFI_PEI_READ_ONLY_VARIABLE2_PPI *VariableServices;
-  UINTN                           DataSize;
-  UINTN                           Index;
-  EFI_MEMORY_TYPE_INFORMATION     MemoryData[EfiMaxMemoryType + 1];
+  EFI_STATUS                       Status;
+  EFI_PEI_READ_ONLY_VARIABLE2_PPI  *VariableServices;
+  UINTN                            DataSize;
+  UINTN                            Index;
+  EFI_MEMORY_TYPE_INFORMATION      MemoryData[EfiMaxMemoryType + 1];
 
   //
   // Locate system configuration variable
@@ -180,7 +180,7 @@ BuildMemoryTypeInformation (
              &gEfiPeiReadOnlyVariable2PpiGuid, // GUID
              0,                                // INSTANCE
              NULL,                             // EFI_PEI_PPI_DESCRIPTOR
-             (VOID **) &VariableServices       // PPI
+             (VOID **)&VariableServices        // PPI
              );
   if (EFI_ERROR (Status)) {
     ASSERT_EFI_ERROR (Status);
@@ -188,14 +188,14 @@ BuildMemoryTypeInformation (
   }
 
   DataSize = sizeof (MemoryData);
-  Status = VariableServices->GetVariable (
-                               VariableServices,
-                               EFI_MEMORY_TYPE_INFORMATION_VARIABLE_NAME,
-                               &gEfiMemoryTypeInformationGuid,
-                               NULL,
-                               &DataSize,
-                               &MemoryData
-                               );
+  Status   = VariableServices->GetVariable (
+                                 VariableServices,
+                                 EFI_MEMORY_TYPE_INFORMATION_VARIABLE_NAME,
+                                 &gEfiMemoryTypeInformationGuid,
+                                 NULL,
+                                 &DataSize,
+                                 &MemoryData
+                                 );
   if (!EFI_ERROR (Status)) {
     if (DataSize % sizeof (EFI_MEMORY_TYPE_INFORMATION) != 0) {
       DEBUG ((DEBUG_ERROR, "The UEFI Memory Type Information variable size is inconsistent with this build.\n"));
@@ -208,6 +208,7 @@ BuildMemoryTypeInformation (
           Status = EFI_COMPROMISED_DATA;
         }
       }
+
       // The last entry must be MaxMemoryType with size 0
       if ((MemoryData[Index].Type != EfiMaxMemoryType) || (MemoryData[Index].NumberOfPages != 0)) {
         DEBUG ((DEBUG_ERROR, "UEFI Memory Type Information variable contains an invalid last entry.\n"));
@@ -230,7 +231,7 @@ BuildMemoryTypeInformation (
     DataSize
     );
 
-  //MU_CHANGE - Add minimum memory type allocations
+  // MU_CHANGE - Add minimum memory type allocations
   //
   // Publish default memory types as minimum allocations.
   //
@@ -239,34 +240,34 @@ BuildMemoryTypeInformation (
     mDefaultMemoryTypeInformation,
     sizeof (mDefaultMemoryTypeInformation)
     );
-  //MU_CHANGE - END
+  // MU_CHANGE - END
 }
 
 EFI_STATUS
 EFIAPI
 GetPlatformMemorySize (
-  IN      EFI_PEI_SERVICES                       **PeiServices,
-  IN      PEI_PLATFORM_MEMORY_SIZE_PPI           *This,
-  IN OUT  UINT64                                 *MemorySize
+  IN      EFI_PEI_SERVICES              **PeiServices,
+  IN      PEI_PLATFORM_MEMORY_SIZE_PPI  *This,
+  IN OUT  UINT64                        *MemorySize
   )
 {
-  EFI_STATUS                      Status;
-  EFI_PEI_READ_ONLY_VARIABLE2_PPI *Variable;
-  UINTN                           DataSize;
-  EFI_MEMORY_TYPE_INFORMATION     MemoryData[EfiMaxMemoryType + 1];
-  UINTN                           Index;
-  EFI_BOOT_MODE                   BootMode;
-  UINTN                           IndexNumber;
+  EFI_STATUS                       Status;
+  EFI_PEI_READ_ONLY_VARIABLE2_PPI  *Variable;
+  UINTN                            DataSize;
+  EFI_MEMORY_TYPE_INFORMATION      MemoryData[EfiMaxMemoryType + 1];
+  UINTN                            Index;
+  EFI_BOOT_MODE                    BootMode;
+  UINTN                            IndexNumber;
 
-#define PEI_MIN_MEMORY_SIZE             (EFI_PHYSICAL_ADDRESS) ((320 * 0x100000))
+  #define PEI_MIN_MEMORY_SIZE  (EFI_PHYSICAL_ADDRESS) ((320 * 0x100000))
 
   *MemorySize = PEI_MIN_MEMORY_SIZE;
-  Status = PeiServicesLocatePpi (
-             &gEfiPeiReadOnlyVariable2PpiGuid,
-             0,
-             NULL,
-             (VOID **)&Variable
-             );
+  Status      = PeiServicesLocatePpi (
+                  &gEfiPeiReadOnlyVariable2PpiGuid,
+                  0,
+                  NULL,
+                  (VOID **)&Variable
+                  );
 
   ASSERT_EFI_ERROR (Status);
 
@@ -276,40 +277,41 @@ GetPlatformMemorySize (
   DataSize = sizeof (MemoryData);
 
   Status = Variable->GetVariable (
-                      Variable,
-                      EFI_MEMORY_TYPE_INFORMATION_VARIABLE_NAME,
-                      &gEfiMemoryTypeInformationGuid,
-                      NULL,
-                      &DataSize,
-                      &MemoryData
-                      );
+                       Variable,
+                       EFI_MEMORY_TYPE_INFORMATION_VARIABLE_NAME,
+                       &gEfiMemoryTypeInformationGuid,
+                       NULL,
+                       &DataSize,
+                       &MemoryData
+                       );
   IndexNumber = sizeof (mDefaultMemoryTypeInformation) / sizeof (EFI_MEMORY_TYPE_INFORMATION);
 
   //
   // Accumulate maximum amount of memory needed
   //
 
-  DEBUG((EFI_D_ERROR, "PEI_MIN_MEMORY_SIZE:%dKB \n", DivU64x32(*MemorySize,1024)));
-  DEBUG((EFI_D_ERROR, "IndexNumber:%d MemoryDataNumber%d \n", IndexNumber,DataSize/ sizeof (EFI_MEMORY_TYPE_INFORMATION)));
+  DEBUG ((EFI_D_ERROR, "PEI_MIN_MEMORY_SIZE:%dKB \n", DivU64x32 (*MemorySize, 1024)));
+  DEBUG ((EFI_D_ERROR, "IndexNumber:%d MemoryDataNumber%d \n", IndexNumber, DataSize/ sizeof (EFI_MEMORY_TYPE_INFORMATION)));
   if (EFI_ERROR (Status)) {
     //
     // Start with minimum memory
     //
     for (Index = 0; Index < IndexNumber; Index++) {
-      DEBUG((EFI_D_ERROR, "Index[%d].Type = %d .NumberOfPages=0x%x\n", Index,mDefaultMemoryTypeInformation[Index].Type,mDefaultMemoryTypeInformation[Index].NumberOfPages));
+      DEBUG ((EFI_D_ERROR, "Index[%d].Type = %d .NumberOfPages=0x%x\n", Index, mDefaultMemoryTypeInformation[Index].Type, mDefaultMemoryTypeInformation[Index].NumberOfPages));
       *MemorySize += mDefaultMemoryTypeInformation[Index].NumberOfPages * EFI_PAGE_SIZE;
     }
-    DEBUG((EFI_D_ERROR, "No memory type,  Total platform memory:%dKB \n", DivU64x32(*MemorySize,1024)));
+
+    DEBUG ((EFI_D_ERROR, "No memory type,  Total platform memory:%dKB \n", DivU64x32 (*MemorySize, 1024)));
   } else {
     //
     // Start with at least 0x200 pages of memory for the DXE Core and the DXE Stack
     //
     for (Index = 0; Index < IndexNumber; Index++) {
-      DEBUG((EFI_D_ERROR, "Index[%d].Type = %d .NumberOfPages=0x%x\n", Index,MemoryData[Index].Type,MemoryData[Index].NumberOfPages));
+      DEBUG ((EFI_D_ERROR, "Index[%d].Type = %d .NumberOfPages=0x%x\n", Index, MemoryData[Index].Type, MemoryData[Index].NumberOfPages));
       *MemorySize += MemoryData[Index].NumberOfPages * EFI_PAGE_SIZE;
-
     }
-    DEBUG((EFI_D_ERROR, "has memory type,  Total platform memory:%dKB \n", DivU64x32(*MemorySize,1024)));
+
+    DEBUG ((EFI_D_ERROR, "has memory type,  Total platform memory:%dKB \n", DivU64x32 (*MemorySize, 1024)));
   }
 
   return EFI_SUCCESS;
@@ -333,20 +335,20 @@ GetPlatformMemorySize (
 EFI_STATUS
 EFIAPI
 BaseMemoryTest (
-  IN  EFI_PEI_SERVICES                   **PeiServices,
-  IN  PEI_BASE_MEMORY_TEST_PPI           *This,
-  IN  EFI_PHYSICAL_ADDRESS               BeginAddress,
-  IN  UINT64                             MemoryLength,
-  IN  PEI_MEMORY_TEST_OP                 Operation,
-  OUT EFI_PHYSICAL_ADDRESS               *ErrorAddress
+  IN  EFI_PEI_SERVICES          **PeiServices,
+  IN  PEI_BASE_MEMORY_TEST_PPI  *This,
+  IN  EFI_PHYSICAL_ADDRESS      BeginAddress,
+  IN  UINT64                    MemoryLength,
+  IN  PEI_MEMORY_TEST_OP        Operation,
+  OUT EFI_PHYSICAL_ADDRESS      *ErrorAddress
   )
 {
   UINT32                TestPattern;
   UINT32                SpanSize;
   EFI_PHYSICAL_ADDRESS  TempAddress;
 
-#define MEMORY_TEST_PATTERN     0x5A5A5A5A
-#define MEMORY_TEST_COVER_SPAN  0x40000
+  #define MEMORY_TEST_PATTERN     0x5A5A5A5A
+  #define MEMORY_TEST_COVER_SPAN  0x40000
 
   TestPattern = MEMORY_TEST_PATTERN;
   SpanSize    = 0;
@@ -357,33 +359,35 @@ BaseMemoryTest (
   ASSERT (BeginAddress + MemoryLength < MAX_ADDRESS);
 
   switch (Operation) {
-  case Extensive:
-    SpanSize = 0x4;
-    break;
+    case Extensive:
+      SpanSize = 0x4;
+      break;
 
-  case Sparse:
-  case Quick:
-    SpanSize = MEMORY_TEST_COVER_SPAN;
-    break;
+    case Sparse:
+    case Quick:
+      SpanSize = MEMORY_TEST_COVER_SPAN;
+      break;
 
-  case Ignore:
-    goto Done;
-    break;
+    case Ignore:
+      goto Done;
+      break;
   }
+
   //
   // Write the test pattern into memory range
   //
   TempAddress = BeginAddress;
   while (TempAddress < BeginAddress + MemoryLength) {
-    (*(UINT32 *) (UINTN) TempAddress) = TestPattern;
-    TempAddress += SpanSize;
+    (*(UINT32 *)(UINTN)TempAddress) = TestPattern;
+    TempAddress                    += SpanSize;
   }
+
   //
   // Read pattern from memory and compare it
   //
   TempAddress = BeginAddress;
   while (TempAddress < BeginAddress + MemoryLength) {
-    if ((*(UINT32 *) (UINTN) TempAddress) != TestPattern) {
+    if ((*(UINT32 *)(UINTN)TempAddress) != TestPattern) {
       *ErrorAddress = TempAddress;
       return EFI_DEVICE_ERROR;
     }
@@ -413,8 +417,8 @@ MemoryDiscoveredPpiNotifyCallback (
   IN VOID                       *Ppi
   )
 {
-  EFI_STATUS                    Status;
-  EFI_BOOT_MODE                 BootMode;
+  EFI_STATUS     Status;
+  EFI_BOOT_MODE  BootMode;
 
   Status = BoardInitAfterMemoryInit ();
   ASSERT_EFI_ERROR (Status);
@@ -487,11 +491,11 @@ PlatformInitAfterTempRamExit (
 EFI_STATUS
 EFIAPI
 PlatformInitPreMem (
-  IN CONST EFI_PEI_SERVICES     **PeiServices
+  IN CONST EFI_PEI_SERVICES  **PeiServices
   )
 {
-  EFI_STATUS                        Status;
-  EFI_BOOT_MODE                     BootMode;
+  EFI_STATUS     Status;
+  EFI_BOOT_MODE  BootMode;
 
   //
   // Start board detection
@@ -507,11 +511,12 @@ PlatformInitPreMem (
   }
 
   BootMode = BoardBootModeDetect ();
-  Status = PeiServicesSetBootMode (BootMode);
+  Status   = PeiServicesSetBootMode (BootMode);
   ASSERT_EFI_ERROR (Status);
   if (BootMode == BOOT_IN_RECOVERY_MODE) {
     Status = PeiServicesInstallPpi (&mPpiListRecoveryBootMode);
   }
+
   ///
   /// Signal possible dependent modules that there has been a
   /// final boot mode determination, it is used to build BIST
@@ -539,7 +544,6 @@ PlatformInitPreMem (
   return Status;
 }
 
-
 /**
   Platform Init before memory PEI module entry point
 
@@ -556,7 +560,7 @@ PlatformInitPreMemEntryPoint (
   IN CONST EFI_PEI_SERVICES     **PeiServices
   )
 {
-  EFI_STATUS Status;
+  EFI_STATUS  Status;
 
   Status = PlatformInitPreMem (PeiServices);
 

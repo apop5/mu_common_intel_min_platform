@@ -17,19 +17,21 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 
 EFI_STATUS
 TestPointCheckFv (
-  IN EFI_FIRMWARE_VOLUME_HEADER   *FvHeader,
-  IN UINT64                       Size,
-  IN GUID                         *FvFormat
+  IN EFI_FIRMWARE_VOLUME_HEADER  *FvHeader,
+  IN UINT64                      Size,
+  IN GUID                        *FvFormat
   )
 {
   if (!CompareGuid (FvFormat, &FvHeader->FileSystemGuid)) {
     DEBUG ((DEBUG_ERROR, "FvFormat error - 0x%lx\n", FvHeader));
     return EFI_INVALID_PARAMETER;
   }
+
   if (Size != FvHeader->FvLength) {
     DEBUG ((DEBUG_ERROR, "FvLength error - 0x%lx\n", FvHeader));
     return EFI_INVALID_PARAMETER;
   }
+
   return EFI_SUCCESS;
 }
 
@@ -57,24 +59,30 @@ TestPointCheckFvInfo (
     if (EFI_ERROR (Status)) {
       break;
     }
-    DEBUG ((DEBUG_INFO,
+
+    DEBUG ((
+      DEBUG_INFO,
       "  BA=%08x  L=%08x  Format={%g}",
       (UINT32)(UINTN)FvInfo->FvInfo,
       FvInfo->FvInfoSize,
       &FvInfo->FvFormat
       ));
     if (FvInfo->ParentFvName != NULL) {
-      DEBUG ((DEBUG_INFO,
+      DEBUG ((
+        DEBUG_INFO,
         "  ParentFv={%g}",
         FvInfo->ParentFvName
         ));
     }
+
     if (FvInfo->ParentFileName != NULL) {
-      DEBUG ((DEBUG_INFO,
+      DEBUG ((
+        DEBUG_INFO,
         "  ParentFileName={%g}",
         FvInfo->ParentFileName
         ));
     }
+
     DEBUG ((DEBUG_INFO, "\n"));
   }
 
@@ -89,29 +97,37 @@ TestPointCheckFvInfo (
     if (EFI_ERROR (Status)) {
       break;
     }
-    DEBUG ((DEBUG_INFO,
+
+    DEBUG ((
+      DEBUG_INFO,
       "  BA=%08x  L=%08x  Format={%g}",
       (UINT32)(UINTN)FvInfo2->FvInfo,
       FvInfo2->FvInfoSize,
       &FvInfo2->FvFormat
       ));
     if (FvInfo2->ParentFvName != NULL) {
-      DEBUG ((DEBUG_INFO,
+      DEBUG ((
+        DEBUG_INFO,
         "  ParentFv={%g}",
         FvInfo2->ParentFvName
         ));
     }
+
     if (FvInfo2->ParentFileName != NULL) {
-      DEBUG ((DEBUG_INFO,
+      DEBUG ((
+        DEBUG_INFO,
         "  ParentFileName={%g}",
         FvInfo2->ParentFileName
         ));
     }
-    DEBUG ((DEBUG_INFO,
+
+    DEBUG ((
+      DEBUG_INFO,
       "  Auth=%08x\n",
       FvInfo2->AuthenticationStatus
       ));
   }
+
   DEBUG ((DEBUG_INFO, "==== TestPointCheckFvInfo - Exit\n"));
 
   for (Index = 0; ; Index++) {
@@ -126,17 +142,18 @@ TestPointCheckFvInfo (
     }
 
     Status = TestPointCheckFv (FvInfo->FvInfo, FvInfo->FvInfoSize, &FvInfo->FvFormat);
-    if (EFI_ERROR(Status)) {
+    if (EFI_ERROR (Status)) {
       TestPointLibAppendErrorString (
         PLATFORM_TEST_POINT_ROLE_PLATFORM_IBV,
         TEST_POINT_IMPLEMENTATION_ID_PLATFORM_PEI,
         TEST_POINT_BYTE1_MEMORY_DISCOVERED_FV_INFO_FUNCTIONAL_ERROR_CODE \
-          TEST_POINT_MEMORY_DISCOVERED \
-          TEST_POINT_BYTE1_MEMORY_DISCOVERED_FV_INFO_FUNCTIONAL_ERROR_STRING
+        TEST_POINT_MEMORY_DISCOVERED \
+        TEST_POINT_BYTE1_MEMORY_DISCOVERED_FV_INFO_FUNCTIONAL_ERROR_STRING
         );
       return EFI_INVALID_PARAMETER;
     }
   }
+
   for (Index2 = 0; ; Index2++) {
     Status = PeiServicesLocatePpi (
                &gEfiPeiFirmwareVolumeInfo2PpiGuid,
@@ -149,13 +166,13 @@ TestPointCheckFvInfo (
     }
 
     Status = TestPointCheckFv (FvInfo2->FvInfo, FvInfo2->FvInfoSize, &FvInfo2->FvFormat);
-    if (EFI_ERROR(Status)) {
+    if (EFI_ERROR (Status)) {
       TestPointLibAppendErrorString (
         PLATFORM_TEST_POINT_ROLE_PLATFORM_IBV,
         TEST_POINT_IMPLEMENTATION_ID_PLATFORM_PEI,
         TEST_POINT_BYTE1_MEMORY_DISCOVERED_FV_INFO_FUNCTIONAL_ERROR_CODE \
-          TEST_POINT_MEMORY_DISCOVERED \
-          TEST_POINT_BYTE1_MEMORY_DISCOVERED_FV_INFO_FUNCTIONAL_ERROR_STRING
+        TEST_POINT_MEMORY_DISCOVERED \
+        TEST_POINT_BYTE1_MEMORY_DISCOVERED_FV_INFO_FUNCTIONAL_ERROR_STRING
         );
       return EFI_INVALID_PARAMETER;
     }

@@ -67,14 +67,14 @@ EFI_EVENT                              mLegacyBootEvent;
 EFI_STATUS
 EFIAPI
 VarLibSetVariable (
-  IN  CHAR16                        *VariableName,
-  IN  EFI_GUID                      *VendorGuid,
-  IN  UINT32                        Attributes,
-  IN  UINTN                         DataSize,
-  IN  VOID                          *Data
+  IN  CHAR16    *VariableName,
+  IN  EFI_GUID  *VendorGuid,
+  IN  UINT32    Attributes,
+  IN  UINTN     DataSize,
+  IN  VOID      *Data
   )
 {
-  EFI_STATUS    Status = EFI_UNSUPPORTED;
+  EFI_STATUS  Status = EFI_UNSUPPORTED;
 
   if (gRT != NULL) {
     Status = gRT->SetVariable (
@@ -85,6 +85,7 @@ VarLibSetVariable (
                     Data
                     );
   }
+
   return Status;
 }
 
@@ -112,13 +113,13 @@ VarLibSetVariable (
 EFI_STATUS
 EFIAPI
 VarLibQueryVariableInfo (
-  IN  UINT32                        Attributes,
-  OUT UINT64                        *MaximumVariableStorageSize,
-  OUT UINT64                        *RemainingVariableStorageSize,
-  OUT UINT64                        *MaximumVariableSize
+  IN  UINT32  Attributes,
+  OUT UINT64  *MaximumVariableStorageSize,
+  OUT UINT64  *RemainingVariableStorageSize,
+  OUT UINT64  *MaximumVariableSize
   )
 {
-  EFI_STATUS    Status = EFI_UNSUPPORTED;
+  EFI_STATUS  Status = EFI_UNSUPPORTED;
 
   if (gRT != NULL) {
     Status = gRT->QueryVariableInfo (
@@ -128,6 +129,7 @@ VarLibQueryVariableInfo (
                     MaximumVariableSize
                     );
   }
+
   return Status;
 }
 
@@ -174,17 +176,17 @@ VarLibIsVariableRequestToLockSupported (
 EFI_STATUS
 EFIAPI
 VarLibVariableRequestToLock (
-  IN  CHAR16                       *VariableName,
-  IN  EFI_GUID                     *VendorGuid
+  IN  CHAR16    *VariableName,
+  IN  EFI_GUID  *VendorGuid
   )
 {
-  EFI_STATUS    Status = EFI_UNSUPPORTED;
+  EFI_STATUS  Status = EFI_UNSUPPORTED;
 
   if (mVariableWriteLibVariablePolicy != NULL) {
     Status = RegisterBasicVariablePolicy (
                mVariableWriteLibVariablePolicy,
-               (CONST EFI_GUID*) VendorGuid,
-               (CONST CHAR16 *) VariableName,
+               (CONST EFI_GUID *)VendorGuid,
+               (CONST CHAR16 *)VariableName,
                VARIABLE_POLICY_NO_MIN_SIZE,
                VARIABLE_POLICY_NO_MAX_SIZE,
                VARIABLE_POLICY_NO_MUST_ATTR,
@@ -192,6 +194,7 @@ VarLibVariableRequestToLock (
                VARIABLE_POLICY_TYPE_LOCK_NOW
                );
   }
+
   return Status;
 }
 
@@ -228,9 +231,11 @@ DxeRuntimeVariableWriteLibDestructor (
   if (mExitBootServiceEvent != 0) {
     gBS->CloseEvent (mExitBootServiceEvent);
   }
+
   if (mLegacyBootEvent != 0) {
     gBS->CloseEvent (mLegacyBootEvent);
   }
+
   return EFI_SUCCESS;
 }
 
@@ -244,8 +249,8 @@ DxeRuntimeVariableWriteLibDestructor (
 VOID
 EFIAPI
 DxeRuntimeVariableWriteLibOnExitBootServices (
-  IN  EFI_EVENT                    Event,
-  IN  VOID                         *Context
+  IN  EFI_EVENT  Event,
+  IN  VOID       *Context
   )
 {
   mVariableWriteLibVariablePolicy = NULL;
@@ -268,11 +273,11 @@ DxeRuntimeVariableWriteLibOnExitBootServices (
 EFI_STATUS
 EFIAPI
 DxeRuntimeVariableWriteLibConstructor (
-  IN EFI_HANDLE         ImageHandle,
-  IN EFI_SYSTEM_TABLE   *SystemTable
+  IN EFI_HANDLE        ImageHandle,
+  IN EFI_SYSTEM_TABLE  *SystemTable
   )
 {
-  EFI_STATUS    Status;
+  EFI_STATUS  Status;
 
   //
   // Locate VariableLockProtocol.
@@ -284,13 +289,13 @@ DxeRuntimeVariableWriteLibConstructor (
   // Register the event to inform SMM variable that it is at runtime.
   //
   Status = gBS->CreateEventEx (
-             EVT_NOTIFY_SIGNAL,
-             TPL_NOTIFY,
-             DxeRuntimeVariableWriteLibOnExitBootServices,
-             NULL,
-             &gEfiEventExitBootServicesGuid,
-             &mExitBootServiceEvent
-             );
+                  EVT_NOTIFY_SIGNAL,
+                  TPL_NOTIFY,
+                  DxeRuntimeVariableWriteLibOnExitBootServices,
+                  NULL,
+                  &gEfiEventExitBootServicesGuid,
+                  &mExitBootServiceEvent
+                  );
   ASSERT_EFI_ERROR (Status);
 
   //

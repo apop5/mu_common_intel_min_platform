@@ -27,11 +27,11 @@
 #define TEST_POINT_AIP_PRIVATE_SIGNATURE  SIGNATURE_32('T', 'S', 'P', 'T')
 
 typedef struct {
-  UINT32                            Signature;
-  EFI_ADAPTER_INFORMATION_PROTOCOL  Aip;
-  VOID                              *TestPoint;
-  UINTN                             TestPointSize;
-  UINTN                             TestPointMaxSize;
+  UINT32                              Signature;
+  EFI_ADAPTER_INFORMATION_PROTOCOL    Aip;
+  VOID                                *TestPoint;
+  UINTN                               TestPointSize;
+  UINTN                               TestPointMaxSize;
 } TEST_POINT_AIP_PRIVATE_DATA;
 
 #define TEST_POINT_AIP_PRIVATE_DATA_FROM_THIS(a) \
@@ -41,7 +41,7 @@ typedef struct {
       TEST_POINT_AIP_PRIVATE_SIGNATURE \
       )
 
-extern EFI_ADAPTER_INFORMATION_PROTOCOL mMmAdapterInformationProtocol;
+extern EFI_ADAPTER_INFORMATION_PROTOCOL  mMmAdapterInformationProtocol;
 
 /**
   Return if input TestPoint data is valid.
@@ -54,8 +54,8 @@ extern EFI_ADAPTER_INFORMATION_PROTOCOL mMmAdapterInformationProtocol;
 **/
 BOOLEAN
 InternalTestPointIsValidTable (
-  IN VOID                     *TestPointData,
-  IN UINTN                    TestPointSize
+  IN VOID   *TestPointData,
+  IN UINTN  TestPointSize
   );
 
 /**
@@ -83,6 +83,7 @@ IsBufferOutsideMmValid (
   );
 
 // MU_CHANGE [START] - StandaloneMm Support
+
 /**
   This function check if the buffer is valid per processor architecture and not overlap with SMRAM.
   A separate function exists because Standalone MM compares the comm buffer using a different function
@@ -100,6 +101,7 @@ IsCommBufferOutsideMmValid (
   IN EFI_PHYSICAL_ADDRESS  Buffer,
   IN UINT64                Length
   );
+
 // MU_CHANGE [END] - StandaloneMm Support
 
 #endif

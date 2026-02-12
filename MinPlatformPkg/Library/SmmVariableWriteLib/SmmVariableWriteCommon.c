@@ -18,7 +18,7 @@
 #include <Protocol/SmmVariable.h>
 
 EFI_SMM_VARIABLE_PROTOCOL  *mVariableWriteLibSmmVariable = NULL;
-BOOLEAN                    mEfiAtRuntime = FALSE;
+BOOLEAN                    mEfiAtRuntime                 = FALSE;
 
 /**
   Sets the value of a variable.
@@ -58,24 +58,25 @@ BOOLEAN                    mEfiAtRuntime = FALSE;
 EFI_STATUS
 EFIAPI
 VarLibSetVariable (
-  IN  CHAR16                       *VariableName,
-  IN  EFI_GUID                     *VendorGuid,
-  IN  UINT32                       Attributes,
-  IN  UINTN                        DataSize,
-  IN  VOID                         *Data
+  IN  CHAR16    *VariableName,
+  IN  EFI_GUID  *VendorGuid,
+  IN  UINT32    Attributes,
+  IN  UINTN     DataSize,
+  IN  VOID      *Data
   )
 {
-  EFI_STATUS    Status = EFI_UNSUPPORTED;
+  EFI_STATUS  Status = EFI_UNSUPPORTED;
 
   if (mVariableWriteLibSmmVariable != NULL) {
     Status = mVariableWriteLibSmmVariable->SmmSetVariable (
-                                            VariableName,
-                                            VendorGuid,
-                                            Attributes,
-                                            DataSize,
-                                            Data
-                                            );
+                                             VariableName,
+                                             VendorGuid,
+                                             Attributes,
+                                             DataSize,
+                                             Data
+                                             );
   }
+
   return Status;
 }
 
@@ -103,13 +104,13 @@ VarLibSetVariable (
 EFI_STATUS
 EFIAPI
 VarLibQueryVariableInfo (
-  IN  UINT32            Attributes,
-  OUT UINT64            *MaximumVariableStorageSize,
-  OUT UINT64            *RemainingVariableStorageSize,
-  OUT UINT64            *MaximumVariableSize
+  IN  UINT32  Attributes,
+  OUT UINT64  *MaximumVariableStorageSize,
+  OUT UINT64  *RemainingVariableStorageSize,
+  OUT UINT64  *MaximumVariableSize
   )
 {
-  EFI_STATUS    Status = EFI_UNSUPPORTED;
+  EFI_STATUS  Status = EFI_UNSUPPORTED;
 
   if (mVariableWriteLibSmmVariable != NULL) {
     Status = mVariableWriteLibSmmVariable->SmmQueryVariableInfo (
@@ -119,6 +120,7 @@ VarLibQueryVariableInfo (
                                              MaximumVariableSize
                                              );
   }
+
   return Status;
 }
 
@@ -161,8 +163,8 @@ VarLibIsVariableRequestToLockSupported (
 EFI_STATUS
 EFIAPI
 VarLibVariableRequestToLock (
-  IN  CHAR16                       *VariableName,
-  IN  EFI_GUID                     *VendorGuid
+  IN  CHAR16    *VariableName,
+  IN  EFI_GUID  *VendorGuid
   )
 {
   //

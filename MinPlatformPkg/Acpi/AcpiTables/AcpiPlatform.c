@@ -74,14 +74,17 @@ DebugDisplayReOrderTable (
 
   DEBUG ((DEBUG_INFO, "Index  AcpiProcId  ApicId   Thread  Flags   Skt  CoreType\n"));
   for (Index = 0; Index < mNumberOfCpus; Index++) {
-    DEBUG ((DEBUG_INFO, " %02d       0x%02X      0x%02X       %d      %d      %d      0x%x\n",
+    DEBUG ((
+      DEBUG_INFO,
+      " %02d       0x%02X      0x%02X       %d      %d      %d      0x%x\n",
       Index,
       CpuApicIdOrderTable[Index].AcpiProcessorUid,
       CpuApicIdOrderTable[Index].ApicId,
       CpuApicIdOrderTable[Index].Thread,
       CpuApicIdOrderTable[Index].Flags,
       CpuApicIdOrderTable[Index].SocketNum,
-                           CpuApicIdOrderTable[Index].CoreType));
+      CpuApicIdOrderTable[Index].CoreType
+      ));
   }
 }
 
@@ -825,7 +828,7 @@ InstallMadtFromScratch (
     // APIC ID as a UINT8, use a processor local APIC structure. Otherwise,
     // use a processor local x2APIC structure.
     //
-    if (!mX2ApicEnabled && CpuApicIdOrderTable[Index].ApicId < MAX_UINT8) {
+    if (!mX2ApicEnabled && (CpuApicIdOrderTable[Index].ApicId < MAX_UINT8)) {
       ProcLocalApicStruct.Flags            = (UINT8)CpuApicIdOrderTable[Index].Flags;
       ProcLocalApicStruct.ApicId           = (UINT8)CpuApicIdOrderTable[Index].ApicId;
       ProcLocalApicStruct.AcpiProcessorUid = (UINT8)CpuApicIdOrderTable[Index].AcpiProcessorUid;
@@ -1160,10 +1163,11 @@ PlatformUpdateTables (
     // Skip OEM table ID and creator information for DSDT, SSDT and PSDT tables, since these are
     // created by an ASL compiler and the creator information is useful.
     //
-    if (Table->Signature != EFI_ACPI_6_5_DIFFERENTIATED_SYSTEM_DESCRIPTION_TABLE_SIGNATURE &&
-        Table->Signature != EFI_ACPI_6_5_SECONDARY_SYSTEM_DESCRIPTION_TABLE_SIGNATURE &&
-        Table->Signature != EFI_ACPI_6_5_PERSISTENT_SYSTEM_DESCRIPTION_TABLE_SIGNATURE
-        ) {
+    if ((Table->Signature != EFI_ACPI_6_5_DIFFERENTIATED_SYSTEM_DESCRIPTION_TABLE_SIGNATURE) &&
+        (Table->Signature != EFI_ACPI_6_5_SECONDARY_SYSTEM_DESCRIPTION_TABLE_SIGNATURE) &&
+        (Table->Signature != EFI_ACPI_6_5_PERSISTENT_SYSTEM_DESCRIPTION_TABLE_SIGNATURE)
+        )
+    {
       TempOemTableId = PcdGet64 (PcdAcpiDefaultOemTableId);
       CopyMem (&TableHeader->OemTableId, &TempOemTableId, 8);
 

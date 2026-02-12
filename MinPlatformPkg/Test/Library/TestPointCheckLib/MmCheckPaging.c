@@ -317,7 +317,8 @@ IsMmSaveState (
     }
 
     if ((BaseAddress >= mSmBaseBuffer[Index] + SMM_HANDLER_OFFSET + TileCodeSize) &&
-        (BaseAddress <  mSmBaseBuffer[Index] + SMM_HANDLER_OFFSET + TileSize)) {
+        (BaseAddress <  mSmBaseBuffer[Index] + SMM_HANDLER_OFFSET + TileSize))
+    {
       return TRUE;
     }
   }

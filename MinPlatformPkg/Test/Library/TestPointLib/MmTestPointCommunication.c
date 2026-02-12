@@ -33,24 +33,26 @@ GetAllMmTestPointData (
 
   TotalSize = 0;
 
-  Handles = NULL;
+  Handles       = NULL;
   HandleBufSize = 0;
-  Status = gMmst->MmLocateHandle (
-                    ByProtocol,
-                    &gEfiAdapterInformationProtocolGuid,
-                    NULL,
-                    &HandleBufSize,
-                    Handles
-                    );
+  Status        = gMmst->MmLocateHandle (
+                           ByProtocol,
+                           &gEfiAdapterInformationProtocolGuid,
+                           NULL,
+                           &HandleBufSize,
+                           Handles
+                           );
   if (Status != EFI_BUFFER_TOO_SMALL) {
     RetStatus = EFI_NOT_FOUND;
-    goto Done ;
+    goto Done;
   }
+
   Handles = AllocateZeroPool (HandleBufSize);
   if (Handles == NULL) {
     RetStatus = EFI_OUT_OF_RESOURCES;
-    goto Done ;
+    goto Done;
   }
+
   Status = gMmst->MmLocateHandle (
                     ByProtocol,
                     &gEfiAdapterInformationProtocolGuid,
@@ -60,14 +62,15 @@ GetAllMmTestPointData (
                     );
   if (EFI_ERROR (Status)) {
     RetStatus = Status;
-    goto Done ;
+    goto Done;
   }
-  NoHandles = HandleBufSize / sizeof(EFI_HANDLE);
+
+  NoHandles = HandleBufSize / sizeof (EFI_HANDLE);
 
   RetStatus = EFI_SUCCESS;
 
-  Aip = NULL;
-  InformationBlock = NULL;
+  Aip                  = NULL;
+  InformationBlock     = NULL;
   InformationBlockSize = 0;
   for (Index = 0; Index < NoHandles; Index++) {
     Status = gMmst->MmHandleProtocol (
@@ -98,6 +101,7 @@ GetAllMmTestPointData (
         break;
       }
     }
+
     FreePool (InfoTypesBuffer);
 
     if (AipCandidate == NULL) {
@@ -107,7 +111,7 @@ GetAllMmTestPointData (
     //
     // Check Role
     //
-    Aip = AipCandidate;
+    Aip    = AipCandidate;
     Status = Aip->GetInformation (
                     Aip,
                     &gAdapterInfoPlatformTestPointGuid,
@@ -123,6 +127,7 @@ GetAllMmTestPointData (
     } else {
       RetStatus = EFI_BUFFER_TOO_SMALL;
     }
+
     TotalSize += InformationBlockSize;
 
     FreePool (InformationBlock);
@@ -147,19 +152,19 @@ Done:
 **/
 VOID
 MmTestPointMmiHandlerGetInfo (
-  IN MMI_HANDLER_TEST_POINT_PARAMETER_GET_INFO   *MmiHandlerTestPointParameterGetInfo
+  IN MMI_HANDLER_TEST_POINT_PARAMETER_GET_INFO  *MmiHandlerTestPointParameterGetInfo
   )
 {
   UINTN       DataSize;
   EFI_STATUS  Status;
-  
+
   DataSize = 0;
-  Status = GetAllMmTestPointData (&DataSize, NULL);
+  Status   = GetAllMmTestPointData (&DataSize, NULL);
   if (Status == EFI_BUFFER_TOO_SMALL) {
-    MmiHandlerTestPointParameterGetInfo->DataSize = DataSize;
+    MmiHandlerTestPointParameterGetInfo->DataSize            = DataSize;
     MmiHandlerTestPointParameterGetInfo->Header.ReturnStatus = 0;
   } else {
-    MmiHandlerTestPointParameterGetInfo->DataSize = 0;
+    MmiHandlerTestPointParameterGetInfo->DataSize            = 0;
     MmiHandlerTestPointParameterGetInfo->Header.ReturnStatus = (UINT64)(INT64)(INTN)EFI_NOT_FOUND;
   }
 }
@@ -176,22 +181,23 @@ MmTestPointMmiHandlerGetInfo (
 **/
 VOID
 MmiHandlerTestPointCopyData (
-  IN VOID       *InputData,
-  IN UINTN      InputDataSize,
-  OUT VOID      *DataBuffer,
-  IN OUT UINT64 *DataSize,
-  IN OUT UINT64 *DataOffset
+  IN VOID        *InputData,
+  IN UINTN       InputDataSize,
+  OUT VOID       *DataBuffer,
+  IN OUT UINT64  *DataSize,
+  IN OUT UINT64  *DataOffset
   )
 {
   if (*DataOffset >= InputDataSize) {
     *DataOffset = InputDataSize;
     return;
   }
+
   if (InputDataSize - *DataOffset < *DataSize) {
     *DataSize = InputDataSize - *DataOffset;
   }
 
-  CopyMem(
+  CopyMem (
     DataBuffer,
     (UINT8 *)InputData + *DataOffset,
     (UINTN)*DataSize
@@ -209,54 +215,59 @@ MmiHandlerTestPointCopyData (
 **/
 VOID
 MmTestPointMmiHandlerGetDataByOffset (
-  IN MMI_HANDLER_TEST_POINT_PARAMETER_GET_DATA_BY_OFFSET     *MmiHandlerTestPointParameterGetDataByOffset
+  IN MMI_HANDLER_TEST_POINT_PARAMETER_GET_DATA_BY_OFFSET  *MmiHandlerTestPointParameterGetDataByOffset
   )
 {
-  VOID                                                   *Data;
-  UINTN                                                  DataSize;
-  EFI_STATUS                                             Status;
+  VOID        *Data;
+  UINTN       DataSize;
+  EFI_STATUS  Status;
 
   Data = NULL;
 
   // MU_CHANGE [START] - StandaloneMm Support
   if (MmiHandlerTestPointParameterGetDataByOffset == NULL) {
-    DEBUG((DEBUG_ERROR, "[%a] - The Buffer passed in is NULL.  Aborting.\n", __func__));
+    DEBUG ((DEBUG_ERROR, "[%a] - The Buffer passed in is NULL.  Aborting.\n", __func__));
     return;
   }
+
   // MU_CHANGE [END] - StandaloneMm Support
 
   //
   // Sanity check
   //
   // MU_CHANGE - Removing Sanity check as we are now completely working within the comm buffer
+
   /*if (!IsBufferOutsideMmValid((UINTN)&MmiHandlerTestPointParameterGetDataByOffset->Data[0], (UINTN)*Size)) {
     DEBUG((DEBUG_ERROR, "MmTestPointMmiHandlerGetDataByOffset: MmTestPoint get data in SMRAM or overflow!\n"));
     MmiHandlerTestPointParameterGetDataByOffset->ReturnStatus = (UINT64)(INT64)(INTN)EFI_ACCESS_DENIED;
     goto Done;
   }*/
-  
+
   DataSize = 0;
-  Status = GetAllMmTestPointData (&DataSize, NULL);
+  Status   = GetAllMmTestPointData (&DataSize, NULL);
   if (Status != EFI_BUFFER_TOO_SMALL) {
     MmiHandlerTestPointParameterGetDataByOffset->Header.ReturnStatus = (UINT64)(INT64)(INTN)EFI_NOT_FOUND;
     goto Done;
   }
+
   Data = AllocatePool (DataSize);
   if (Data == NULL) {
     MmiHandlerTestPointParameterGetDataByOffset->Header.ReturnStatus = (UINT64)(INT64)(INTN)EFI_OUT_OF_RESOURCES;
     goto Done;
   }
+
   Status = GetAllMmTestPointData (&DataSize, Data);
-  if (EFI_ERROR(Status)) {
+  if (EFI_ERROR (Status)) {
     MmiHandlerTestPointParameterGetDataByOffset->Header.ReturnStatus = (UINT64)(INT64)(INTN)Status;
     goto Done;
   }
 
   // MU_CHANGE [START] - StandaloneMm Support
   if (DataSize > MmiHandlerTestPointParameterGetDataByOffset->DataSize) {
-    DEBUG((DEBUG_ERROR, "[%a] - The Datasize we are going to copy over is larger than expected.  Aborting.\n", __func__));
+    DEBUG ((DEBUG_ERROR, "[%a] - The Datasize we are going to copy over is larger than expected.  Aborting.\n", __func__));
     goto Done;
   }
+
   // MU_CHANGE [END] - StandaloneMm Support
 
   //
@@ -304,59 +315,62 @@ MmTestPointMmiHandler (
   IN OUT UINTN   *CommBufferSize  OPTIONAL
   )
 {
-  MMI_HANDLER_TEST_POINT_PARAMETER_HEADER     *MmiHandlerTestPointParameterHeader;
-  MMI_HANDLER_TEST_POINT_PARAMETER_GET_DATA_BY_OFFSET *MmiHandlerTestPointParameterOffset; // MU_CHANGE - StandaloneMm Support
-  UINTN                                       TempCommBufferSize;
+  MMI_HANDLER_TEST_POINT_PARAMETER_HEADER              *MmiHandlerTestPointParameterHeader;
+  MMI_HANDLER_TEST_POINT_PARAMETER_GET_DATA_BY_OFFSET  *MmiHandlerTestPointParameterOffset; // MU_CHANGE - StandaloneMm Support
+  UINTN                                                TempCommBufferSize;
 
-  DEBUG((DEBUG_INFO, "MmTestPointMmiHandler Enter\n"));
+  DEBUG ((DEBUG_INFO, "MmTestPointMmiHandler Enter\n"));
 
   //
   // If input is invalid, stop processing this MMI
   //
-  if (CommBuffer == NULL || CommBufferSize == NULL) {
+  if ((CommBuffer == NULL) || (CommBufferSize == NULL)) {
     return EFI_SUCCESS;
   }
 
   TempCommBufferSize = *CommBufferSize;
 
-  if (TempCommBufferSize < sizeof(MMI_HANDLER_TEST_POINT_PARAMETER_HEADER)) {
-    DEBUG((DEBUG_INFO, "MmTestPointMmiHandler: MM communication buffer size invalid!\n"));
+  if (TempCommBufferSize < sizeof (MMI_HANDLER_TEST_POINT_PARAMETER_HEADER)) {
+    DEBUG ((DEBUG_INFO, "MmTestPointMmiHandler: MM communication buffer size invalid!\n"));
     return EFI_SUCCESS;
   }
 
-  if (!IsCommBufferOutsideMmValid((UINTN)CommBuffer, TempCommBufferSize)) { // MU_CHANGE - StandaloneMm Support
-    DEBUG((DEBUG_INFO, "MmTestPointMmiHandler: MM communication buffer in MMRAM or overflow!\n"));
+  if (!IsCommBufferOutsideMmValid ((UINTN)CommBuffer, TempCommBufferSize)) {
+    // MU_CHANGE - StandaloneMm Support
+    DEBUG ((DEBUG_INFO, "MmTestPointMmiHandler: MM communication buffer in MMRAM or overflow!\n"));
     return EFI_SUCCESS;
   }
 
-  MmiHandlerTestPointParameterHeader = (MMI_HANDLER_TEST_POINT_PARAMETER_HEADER *)((UINTN)CommBuffer);
+  MmiHandlerTestPointParameterHeader               = (MMI_HANDLER_TEST_POINT_PARAMETER_HEADER *)((UINTN)CommBuffer);
   MmiHandlerTestPointParameterHeader->ReturnStatus = (UINT64)-1;
 
   switch (MmiHandlerTestPointParameterHeader->Command) {
-  case MMI_HANDLER_TEST_POINT_COMMAND_GET_INFO:
-    DEBUG((DEBUG_INFO, "MmiHandlerTestPointHandlerGetInfo\n"));
-    if (TempCommBufferSize != sizeof(MMI_HANDLER_TEST_POINT_PARAMETER_GET_INFO)) {
-      DEBUG((DEBUG_INFO, "MmTestPointMmiHandler: MM communication buffer size invalid!\n"));
-      return EFI_SUCCESS;
-    }
-    MmTestPointMmiHandlerGetInfo((MMI_HANDLER_TEST_POINT_PARAMETER_GET_INFO *)(UINTN)CommBuffer);
-    break;
-  case MMI_HANDLER_TEST_POINT_COMMAND_GET_DATA_BY_OFFSET:
-    DEBUG((DEBUG_INFO, "MmiHandlerTestPointHandlerGetDataByOffset\n"));
-    // MU_CHANGE [START] - StandaloneMm Support
-    MmiHandlerTestPointParameterOffset = (MMI_HANDLER_TEST_POINT_PARAMETER_GET_DATA_BY_OFFSET *)CommBuffer;
-    if (TempCommBufferSize != (sizeof(MMI_HANDLER_TEST_POINT_PARAMETER_GET_DATA_BY_OFFSET) + MmiHandlerTestPointParameterOffset->DataSize)) {
-      DEBUG((DEBUG_INFO, "MmTestPointMmiHandler: MM communication buffer size invalid!\n"));
-      return EFI_SUCCESS;
-    }
-    // MU_CHANGE [END] - StandaloneMm Support
-    MmTestPointMmiHandlerGetDataByOffset((MMI_HANDLER_TEST_POINT_PARAMETER_GET_DATA_BY_OFFSET *)(UINTN)CommBuffer);
-    break;
-  default:
-    break;
+    case MMI_HANDLER_TEST_POINT_COMMAND_GET_INFO:
+      DEBUG ((DEBUG_INFO, "MmiHandlerTestPointHandlerGetInfo\n"));
+      if (TempCommBufferSize != sizeof (MMI_HANDLER_TEST_POINT_PARAMETER_GET_INFO)) {
+        DEBUG ((DEBUG_INFO, "MmTestPointMmiHandler: MM communication buffer size invalid!\n"));
+        return EFI_SUCCESS;
+      }
+
+      MmTestPointMmiHandlerGetInfo ((MMI_HANDLER_TEST_POINT_PARAMETER_GET_INFO *)(UINTN)CommBuffer);
+      break;
+    case MMI_HANDLER_TEST_POINT_COMMAND_GET_DATA_BY_OFFSET:
+      DEBUG ((DEBUG_INFO, "MmiHandlerTestPointHandlerGetDataByOffset\n"));
+      // MU_CHANGE [START] - StandaloneMm Support
+      MmiHandlerTestPointParameterOffset = (MMI_HANDLER_TEST_POINT_PARAMETER_GET_DATA_BY_OFFSET *)CommBuffer;
+      if (TempCommBufferSize != (sizeof (MMI_HANDLER_TEST_POINT_PARAMETER_GET_DATA_BY_OFFSET) + MmiHandlerTestPointParameterOffset->DataSize)) {
+        DEBUG ((DEBUG_INFO, "MmTestPointMmiHandler: MM communication buffer size invalid!\n"));
+        return EFI_SUCCESS;
+      }
+
+      // MU_CHANGE [END] - StandaloneMm Support
+      MmTestPointMmiHandlerGetDataByOffset ((MMI_HANDLER_TEST_POINT_PARAMETER_GET_DATA_BY_OFFSET *)(UINTN)CommBuffer);
+      break;
+    default:
+      break;
   }
 
-  DEBUG((DEBUG_INFO, "MmTestPointMmiHandler Exit\n"));
+  DEBUG ((DEBUG_INFO, "MmTestPointMmiHandler Exit\n"));
 
   return EFI_SUCCESS;
 }
@@ -369,14 +383,14 @@ RegisterMmTestPointMmiHandler (
   VOID
   )
 {
-  EFI_HANDLE                       DispatchHandle;
-  EFI_STATUS                       Status;
-  STATIC BOOLEAN                   Registered = FALSE;
+  EFI_HANDLE      DispatchHandle;
+  EFI_STATUS      Status;
+  STATIC BOOLEAN  Registered = FALSE;
 
   if (Registered) {
-    return ;
+    return;
   }
-  
+
   Status = gMmst->MmiHandlerRegister (
                     MmTestPointMmiHandler,
                     &gAdapterInfoPlatformTestPointGuid,

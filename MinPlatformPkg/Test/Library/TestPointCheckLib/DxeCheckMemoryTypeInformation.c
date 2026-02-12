@@ -17,10 +17,11 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 
 CHAR8 *
 ShortNameOfMemoryType (
-  IN UINT32 Type
+  IN UINT32  Type
   );
 
-//MU_CHANGE - Add minimum memory type allocations
+// MU_CHANGE - Add minimum memory type allocations
+
 /**
   This routine returns the minimum allocation for the given memory type.
 
@@ -58,7 +59,8 @@ GetMinimumAllocation (
 
   return MinAllocation;
 }
-//MU_CHANGE - END
+
+// MU_CHANGE - END
 
 /**
   Dump Memory Type Info Summary for debug.
@@ -72,7 +74,7 @@ VOID
 DumpMemoryTypeInfoSummary (
   IN CONST EFI_MEMORY_TYPE_INFORMATION  *CurrentMemoryTypeInformation,
   IN CONST EFI_MEMORY_TYPE_INFORMATION  *PreviousMemoryTypeInformation,
-  IN CONST EFI_MEMORY_TYPE_INFORMATION  *MemoryTypeMinimumAllocationInformation //MU_CHANGE - Add minimum memory type allocations
+  IN CONST EFI_MEMORY_TYPE_INFORMATION  *MemoryTypeMinimumAllocationInformation // MU_CHANGE - Add minimum memory type allocations
   )
 {
   UINTN          Index;
@@ -81,22 +83,22 @@ DumpMemoryTypeInfoSummary (
   UINT32         Previous;
   UINT32         Current;
   UINT32         Next;
-  UINT32         Minimum;  //MU_CHANGE - Add minimum memory type allocations
+  UINT32         Minimum;  // MU_CHANGE - Add minimum memory type allocations
   BOOLEAN        MemoryTypeInformationModified;
 
   MemoryTypeInformationModified = FALSE;
-  BootMode = GetBootModeHob ();
+  BootMode                      = GetBootModeHob ();
 
   //
   // Use a heuristic to adjust the Memory Type Information for the next boot
   //
-  //MU_CHANGE - Add minimum memory type allocations
+  // MU_CHANGE - Add minimum memory type allocations
   DEBUG ((DEBUG_INFO, "\n"));
   DEBUG ((DEBUG_INFO, "             (HOB)   (ConfTabl)   (HOB)    (Var)  \n"));
   DEBUG ((DEBUG_INFO, "  Memory    Previous  Current    Minimum   Next   \n"));
   DEBUG ((DEBUG_INFO, "   Type      Pages     Pages      Pages    Pages  \n"));
   DEBUG ((DEBUG_INFO, "==========  ========  ========  ========  ========\n"));
-  //MU_CHANGE - END
+  // MU_CHANGE - END
   for (Index = 0; PreviousMemoryTypeInformation[Index].Type != EfiMaxMemoryType; Index++) {
     for (Index1 = 0; CurrentMemoryTypeInformation[Index1].Type != EfiMaxMemoryType; Index1++) {
       if (PreviousMemoryTypeInformation[Index].Type == CurrentMemoryTypeInformation[Index1].Type) {
@@ -114,10 +116,10 @@ DumpMemoryTypeInfoSummary (
     //
     Previous = PreviousMemoryTypeInformation[Index].NumberOfPages;
     Current  = CurrentMemoryTypeInformation[Index1].NumberOfPages;
-    //MU_CHANGE - Add minimum memory type allocations
-    Minimum  = GetMinimumAllocation (MemoryTypeMinimumAllocationInformation, PreviousMemoryTypeInformation[Index].Type);
-    Next     = Previous;
-    //MU_CHANGE - End
+    // MU_CHANGE - Add minimum memory type allocations
+    Minimum = GetMinimumAllocation (MemoryTypeMinimumAllocationInformation, PreviousMemoryTypeInformation[Index].Type);
+    Next    = Previous;
+    // MU_CHANGE - End
 
     //
     // Inconsistent Memory Reserved across bootings may lead to S4 fail
@@ -136,19 +138,21 @@ DumpMemoryTypeInfoSummary (
     if ((Next > 0) && (Next < 4)) {
       Next = 4;
     }
-    //MU_CHANGE - Add minimum memory type allocations
+
+    // MU_CHANGE - Add minimum memory type allocations
     if (Next < Minimum) {
       Next = Minimum;
     }
-    //MU_CHANGE - End
+
+    // MU_CHANGE - End
     if (Next != Previous) {
       MemoryTypeInformationModified = TRUE;
     }
 
     DEBUG ((DEBUG_INFO, ShortNameOfMemoryType (PreviousMemoryTypeInformation[Index].Type)));
-    //MU_CHANGE - Add minimum memory type allocations
+    // MU_CHANGE - Add minimum memory type allocations
     DEBUG ((DEBUG_INFO, "  %08x  %08x  %08x  %08x\n", Previous, Current, Minimum, Next));
-    //MU_CHANGE - End
+    // MU_CHANGE - End
   }
 
   DEBUG ((DEBUG_INFO, "\n"));
@@ -171,12 +175,12 @@ TestPointCheckMemoryTypeInformation (
   EFI_HOB_GUID_TYPE  *GuidHob;
   VOID               *CurrentMemoryTypeInformation;
   VOID               *PreviousMemoryTypeInformation;
-  VOID               *MemoryTypeMinimumAllocationInformation; //MU_CHANGE - Add minimum memory type allocations
+  VOID               *MemoryTypeMinimumAllocationInformation; // MU_CHANGE - Add minimum memory type allocations
 
   DEBUG ((DEBUG_INFO, "==== TestPointCheckMemoryTypeInformation - Enter\n"));
   CurrentMemoryTypeInformation           = NULL;
   PreviousMemoryTypeInformation          = NULL;
-  MemoryTypeMinimumAllocationInformation = NULL; //MU_CHANGE - Add minimum memory type allocations
+  MemoryTypeMinimumAllocationInformation = NULL; // MU_CHANGE - Add minimum memory type allocations
 
   Status = EfiGetSystemConfigurationTable (&gEfiMemoryTypeInformationGuid, &CurrentMemoryTypeInformation);
   if (EFI_ERROR (Status)) {
@@ -190,8 +194,8 @@ TestPointCheckMemoryTypeInformation (
     Status = EFI_NOT_FOUND;
     goto Done;
   }
-  
-  //MU_CHANGE - Add minimum memory type allocations
+
+  // MU_CHANGE - Add minimum memory type allocations
   GuidHob = GetFirstGuidHob (&gEfiMemoryTypeMinimumAllocationGuid);
   if (GuidHob != NULL) {
     MemoryTypeMinimumAllocationInformation = GET_GUID_HOB_DATA (GuidHob);
@@ -200,7 +204,8 @@ TestPointCheckMemoryTypeInformation (
   if ((CurrentMemoryTypeInformation != NULL) && (PreviousMemoryTypeInformation != NULL)) {
     DumpMemoryTypeInfoSummary (CurrentMemoryTypeInformation, PreviousMemoryTypeInformation, MemoryTypeMinimumAllocationInformation);
   }
-  //MU_CHANGE - End
+
+  // MU_CHANGE - End
 
   DEBUG ((DEBUG_INFO, "==== TestPointCheckMemoryTypeInformation - Exit\n"));
 

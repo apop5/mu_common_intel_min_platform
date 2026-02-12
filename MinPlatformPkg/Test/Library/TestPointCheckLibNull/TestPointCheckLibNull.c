@@ -25,8 +25,8 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 EFI_STATUS
 EFIAPI
 TestPointTempMemoryFunction (
-  IN VOID   *TempRamStart,
-  IN VOID   *TempRamEnd
+  IN VOID  *TempRamStart,
+  IN VOID  *TempRamEnd
   )
 {
   return EFI_SUCCESS;
@@ -685,7 +685,7 @@ TestPointReadyToBootMmPageProtection (
   Ready To Boot.
 
   Test subject: MM page table.
-  Test overview: Verify the MM page table matches the MM memory 
+  Test overview: Verify the MM page table matches the MM memory
   attribute table.
   Reporting mechanism: Set ADAPTER_INFO_PLATFORM_TEST_POINT_STRUCT.
                        Reports an error message upon checking.
@@ -731,6 +731,7 @@ TestPointPciEnumerationDonePcieGenSpeed (
 }
 
 // MU_CHANGE [BEGIN] - Provide missing stub implementations
+
 /**
    Prints out the MM loaded image
  */
@@ -795,4 +796,5 @@ TestPointMmReadyToLockSecureMmCommunicationBuffer (
 {
   return EFI_SUCCESS;
 }
+
 // MU_CHANGE [END]

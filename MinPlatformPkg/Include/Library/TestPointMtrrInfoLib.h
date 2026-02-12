@@ -17,8 +17,8 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 #include <Uefi.h>
 
 typedef struct {
-  UINT64     BaseAddress;
-  UINT64     Type;
+  UINT64    BaseAddress;
+  UINT64    Type;
 } VARIABLE_MTRR_INFO;
 
 typedef enum {
@@ -44,8 +44,8 @@ typedef enum {
 UINTN
 EFIAPI
 GetPlatformMtrrCacheData (
-  OUT VARIABLE_MTRR_INFO **CheckedMtrrs,
-  IN  BOOT_POINT         Boot
+  OUT VARIABLE_MTRR_INFO  **CheckedMtrrs,
+  IN  BOOT_POINT          Boot
   );
 
 #endif

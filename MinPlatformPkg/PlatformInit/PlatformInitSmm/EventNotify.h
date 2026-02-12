@@ -1,5 +1,5 @@
 /** @file
-  This header file lists the shared MM event notify functions that both 
+  This header file lists the shared MM event notify functions that both
   Traditional and Standalone MM use.
 
   Copyright (c) Microsoft Corporation.

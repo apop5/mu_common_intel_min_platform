@@ -13,8 +13,8 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 // NV data structure
 //
 typedef struct {
-  EFI_PHYSICAL_ADDRESS  S3PeiMemBase;
-  UINT64                S3PeiMemSize;
+  EFI_PHYSICAL_ADDRESS    S3PeiMemBase;
+  UINT64                  S3PeiMemSize;
 } ACPI_S3_MEMORY;
 
 #define ACPI_S3_MEMORY_NV_NAME  L"S3MemoryInfo"

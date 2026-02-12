@@ -14,7 +14,7 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 #include <Library/TestPointLib.h>
 #include <Library/BaseLib.h>
 #include <Library/DebugLib.h>
-#include <Library/BaseMemoryLib.h> 
+#include <Library/BaseMemoryLib.h>
 #include <Library/MemoryAllocationLib.h>
 #include <Library/StandaloneMmMemLib.h>
 #include <Library/MmServicesTableLib.h>
@@ -30,7 +30,8 @@ GLOBAL_REMOVE_IF_UNREFERENCED UINTN                  mUefiDescriptorSize;
 EFI_MEMORY_ATTRIBUTES_TABLE  *mUefiMemoryAttributesTable;
 
 VOID
-EFIAPI // MU_CHANGE
+EFIAPI
+// MU_CHANGE
 TestPointDumpMmLoadedImage (
   VOID
   );
@@ -157,8 +158,8 @@ TestPointReadyToLockMmMemoryAttributeTableFunctional (
 **/
 EFI_STATUS
 TestPointReadyToBootMmPageProtectionHandler (
-  IN OUT VOID    *CommBuffer      OPTIONAL,
-  IN OUT UINTN   *CommBufferSize  OPTIONAL
+  IN OUT VOID   *CommBuffer      OPTIONAL,
+  IN OUT UINTN  *CommBufferSize  OPTIONAL
   )
 {
   EFI_STATUS                                      Status;

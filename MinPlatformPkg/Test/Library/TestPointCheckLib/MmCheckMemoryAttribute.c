@@ -21,15 +21,15 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 
 VOID
 TestPointDumpMemoryAttributesTable (
-  IN EFI_MEMORY_ATTRIBUTES_TABLE                     *MemoryAttributesTable
+  IN EFI_MEMORY_ATTRIBUTES_TABLE  *MemoryAttributesTable
   );
 
 EFI_STATUS
 TestPointCheckImageMemoryAttribute (
-  IN EFI_MEMORY_ATTRIBUTES_TABLE     *MemoryAttributesTable,
-  IN EFI_PHYSICAL_ADDRESS            ImageBase,
-  IN UINT64                          ImageSize,
-  IN BOOLEAN                         IsFromMm
+  IN EFI_MEMORY_ATTRIBUTES_TABLE  *MemoryAttributesTable,
+  IN EFI_PHYSICAL_ADDRESS         ImageBase,
+  IN UINT64                       ImageSize,
+  IN BOOLEAN                      IsFromMm
   );
 
 EFI_STATUS
@@ -39,38 +39,39 @@ MmGetSystemConfigurationTable (
   OUT VOID      **Table
   );
 
-
 EFI_STATUS
 TestPointCheckMmMemoryAttributesTable (
-  IN EFI_MEMORY_ATTRIBUTES_TABLE                     *MemoryAttributesTable
+  IN EFI_MEMORY_ATTRIBUTES_TABLE  *MemoryAttributesTable
   )
 {
-  EFI_STATUS                             Status;
-  EFI_LOADED_IMAGE_PROTOCOL              *LoadedImage;
-  UINTN                                  Index;
-  UINTN                                  HandleBufSize;
-  EFI_HANDLE                             *HandleBuf;
-  UINTN                                  HandleCount;
-  EFI_STATUS                             ReturnStatus;
-  
+  EFI_STATUS                 Status;
+  EFI_LOADED_IMAGE_PROTOCOL  *LoadedImage;
+  UINTN                      Index;
+  UINTN                      HandleBufSize;
+  EFI_HANDLE                 *HandleBuf;
+  UINTN                      HandleCount;
+  EFI_STATUS                 ReturnStatus;
+
   ReturnStatus = EFI_SUCCESS;
   DEBUG ((DEBUG_INFO, "==== TestPointDumpMmLoadedImage - Enter\n"));
-  HandleBuf = NULL;
+  HandleBuf     = NULL;
   HandleBufSize = 0;
-  Status = gMmst->MmLocateHandle (
-                    ByProtocol,
-                    &gEfiLoadedImageProtocolGuid,
-                    NULL,
-                    &HandleBufSize,
-                    HandleBuf
-                    );
+  Status        = gMmst->MmLocateHandle (
+                           ByProtocol,
+                           &gEfiLoadedImageProtocolGuid,
+                           NULL,
+                           &HandleBufSize,
+                           HandleBuf
+                           );
   if (Status != EFI_BUFFER_TOO_SMALL) {
-    goto Done ;
+    goto Done;
   }
+
   HandleBuf = AllocateZeroPool (HandleBufSize);
   if (HandleBuf == NULL) {
-    goto Done ;
+    goto Done;
   }
+
   Status = gMmst->MmLocateHandle (
                     ByProtocol,
                     &gEfiLoadedImageProtocolGuid,
@@ -79,10 +80,11 @@ TestPointCheckMmMemoryAttributesTable (
                     HandleBuf
                     );
   if (EFI_ERROR (Status)) {
-    goto Done ;
+    goto Done;
   }
-  HandleCount = HandleBufSize / sizeof(EFI_HANDLE);
-  
+
+  HandleCount = HandleBufSize / sizeof (EFI_HANDLE);
+
   DEBUG ((DEBUG_INFO, "MmLoadedImage (%d):\n", HandleCount));
   for (Index = 0; Index < HandleCount; Index++) {
     Status = gMmst->MmHandleProtocol (
@@ -90,16 +92,17 @@ TestPointCheckMmMemoryAttributesTable (
                       &gEfiLoadedImageProtocolGuid,
                       (VOID **)&LoadedImage
                       );
-    if (EFI_ERROR(Status)) {
+    if (EFI_ERROR (Status)) {
       continue;
     }
+
     Status = TestPointCheckImageMemoryAttribute (
                MemoryAttributesTable,
                (EFI_PHYSICAL_ADDRESS)(UINTN)LoadedImage->ImageBase,
                LoadedImage->ImageSize,
                TRUE
                );
-    if (EFI_ERROR(Status)) {
+    if (EFI_ERROR (Status)) {
       ReturnStatus = Status;
     }
   }
@@ -120,12 +123,12 @@ TestPointCheckMmMemAttribute (
 {
   EFI_STATUS  Status;
   VOID        *MemoryAttributesTable;
-  
+
   DEBUG ((DEBUG_INFO, "==== TestPointCheckMmMemAttribute - Enter\n"));
   Status = MmGetSystemConfigurationTable (&gEdkiiPiSmmMemoryAttributesTableGuid, (VOID **)&MemoryAttributesTable);
   if (!EFI_ERROR (Status)) {
-    TestPointDumpMemoryAttributesTable(MemoryAttributesTable);
-    Status = TestPointCheckMmMemoryAttributesTable(MemoryAttributesTable);
+    TestPointDumpMemoryAttributesTable (MemoryAttributesTable);
+    Status = TestPointCheckMmMemoryAttributesTable (MemoryAttributesTable);
   }
 
   if (EFI_ERROR (Status)) {
@@ -133,10 +136,11 @@ TestPointCheckMmMemAttribute (
       PLATFORM_TEST_POINT_ROLE_PLATFORM_IBV,
       TEST_POINT_IMPLEMENTATION_ID_PLATFORM_SMM,
       TEST_POINT_BYTE6_SMM_READY_TO_LOCK_SMM_MEMORY_ATTRIBUTE_TABLE_FUNCTIONAL_ERROR_CODE \
-        TEST_POINT_SMM_READY_TO_LOCK \
-        TEST_POINT_BYTE6_SMM_READY_TO_LOCK_SMM_MEMORY_ATTRIBUTE_TABLE_FUNCTIONAL_ERROR_STRING
+      TEST_POINT_SMM_READY_TO_LOCK \
+      TEST_POINT_BYTE6_SMM_READY_TO_LOCK_SMM_MEMORY_ATTRIBUTE_TABLE_FUNCTIONAL_ERROR_STRING
       );
   }
+
   DEBUG ((DEBUG_INFO, "==== TestPointCheckMmMemAttribute - Exit\n"));
 
   return Status;

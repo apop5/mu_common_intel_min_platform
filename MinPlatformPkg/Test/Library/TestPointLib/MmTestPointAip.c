@@ -28,8 +28,8 @@
   @retval EFI_NOT_FOUND              Information is not available for the requested information type.
   @retval EFI_DEVICE_ERROR           The device reported an error.
   @retval EFI_OUT_OF_RESOURCES       The request could not be completed due to a lack of resources.
-  @retval EFI_INVALID_PARAMETER      This is NULL. 
-  @retval EFI_INVALID_PARAMETER      InformationBlock is NULL. 
+  @retval EFI_INVALID_PARAMETER      This is NULL.
+  @retval EFI_INVALID_PARAMETER      InformationBlock is NULL.
   @retval EFI_INVALID_PARAMETER      InformationBlockSize is NULL.
 
 **/
@@ -47,16 +47,18 @@ TestPointAipGetInfo (
   if ((This == NULL) || (InformationBlock == NULL) || (InformationBlockSize == NULL) || (InformationType == NULL)) {
     return EFI_INVALID_PARAMETER;
   }
+
   if (!CompareGuid (InformationType, &gAdapterInfoPlatformTestPointGuid)) {
     return EFI_UNSUPPORTED;
   }
 
-  TestPointAip = TEST_POINT_AIP_PRIVATE_DATA_FROM_THIS(This);
+  TestPointAip = TEST_POINT_AIP_PRIVATE_DATA_FROM_THIS (This);
 
   *InformationBlock = AllocateCopyPool (TestPointAip->TestPointSize, TestPointAip->TestPoint);
   if (*InformationBlock == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }
+
   *InformationBlockSize = TestPointAip->TestPointSize;
   return EFI_SUCCESS;
 }
@@ -97,6 +99,7 @@ TestPointAipSetInfo (
   if ((This == NULL) || (InformationBlock == NULL)) {
     return EFI_INVALID_PARAMETER;
   }
+
   if (!CompareGuid (InformationType, &gAdapterInfoPlatformTestPointGuid)) {
     return EFI_UNSUPPORTED;
   }
@@ -105,16 +108,17 @@ TestPointAipSetInfo (
     return EFI_VOLUME_CORRUPTED;
   }
 
-  TestPointAip = TEST_POINT_AIP_PRIVATE_DATA_FROM_THIS(This);
+  TestPointAip = TEST_POINT_AIP_PRIVATE_DATA_FROM_THIS (This);
 
   if (InformationBlockSize > TestPointAip->TestPointMaxSize) {
     NewTestPoint = AllocateZeroPool (InformationBlockSize);
     if (NewTestPoint == NULL) {
       return EFI_OUT_OF_RESOURCES;
     }
+
     FreePool (TestPointAip->TestPoint);
-    TestPointAip->TestPoint = NewTestPoint;
-    TestPointAip->TestPointSize = 0;
+    TestPointAip->TestPoint        = NewTestPoint;
+    TestPointAip->TestPointSize    = 0;
     TestPointAip->TestPointMaxSize = InformationBlockSize;
   }
 
@@ -157,16 +161,17 @@ TestPointAipGetSupportedTypes (
     return EFI_INVALID_PARAMETER;
   }
 
-  *InfoTypesBuffer = AllocateCopyPool (sizeof(gAdapterInfoPlatformTestPointGuid), &gAdapterInfoPlatformTestPointGuid);
+  *InfoTypesBuffer = AllocateCopyPool (sizeof (gAdapterInfoPlatformTestPointGuid), &gAdapterInfoPlatformTestPointGuid);
   if (*InfoTypesBuffer == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }
+
   *InfoTypesBufferCount = 1;
 
   return EFI_SUCCESS;
 }
 
-EFI_ADAPTER_INFORMATION_PROTOCOL mMmAdapterInformationProtocol = {
+EFI_ADAPTER_INFORMATION_PROTOCOL  mMmAdapterInformationProtocol = {
   TestPointAipGetInfo,
   TestPointAipSetInfo,
   TestPointAipGetSupportedTypes,

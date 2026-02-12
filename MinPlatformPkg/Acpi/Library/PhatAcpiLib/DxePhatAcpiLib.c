@@ -19,7 +19,7 @@
 #include <Protocol/AcpiTable.h>
 #include <Protocol/AcpiSystemDescriptionTable.h>
 
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_ACPI_TABLE_PROTOCOL  *mAcpiTableProtocol  = NULL;
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_ACPI_TABLE_PROTOCOL  *mAcpiTableProtocol = NULL;
 
 /**
   Initialize the header of the Platform Health Assessment Table.
@@ -30,9 +30,9 @@ GLOBAL_REMOVE_IF_UNREFERENCED EFI_ACPI_TABLE_PROTOCOL  *mAcpiTableProtocol  = NU
 **/
 VOID
 InitPhatTableHeader (
-  OUT EFI_ACPI_DESCRIPTION_HEADER   *Header,
-  IN  UINT8                         *OemId,
-  IN  UINT64                        *OemTableId
+  OUT EFI_ACPI_DESCRIPTION_HEADER  *Header,
+  IN  UINT8                        *OemId,
+  IN  UINT64                       *OemTableId
   )
 {
   ZeroMem (Header, sizeof (EFI_ACPI_DESCRIPTION_HEADER));
@@ -41,9 +41,9 @@ InitPhatTableHeader (
   //
   // total length (FVI, Driver Health).
   //
-  Header->Length          = 0;
-  Header->Revision        = EFI_ACPI_6_5_PLATFORM_HEALTH_ASSESSMENT_TABLE_REVISION;
-  Header->Checksum        = 0;
+  Header->Length   = 0;
+  Header->Revision = EFI_ACPI_6_5_PLATFORM_HEALTH_ASSESSMENT_TABLE_REVISION;
+  Header->Checksum = 0;
   CopyMem (Header->OemId, OemId, sizeof (Header->OemId));
   CopyMem (&Header->OemTableId, OemTableId, sizeof (UINT64));
   Header->OemRevision     = PcdGet32 (PcdAcpiDefaultOemRevision);
@@ -67,7 +67,7 @@ SearchAcpiTablePointer (
 
   Entry = NULL;
 
-  Status = gBS->LocateProtocol (&gEfiAcpiTableProtocolGuid, NULL, (VOID **) &mAcpiTableProtocol);
+  Status = gBS->LocateProtocol (&gEfiAcpiTableProtocolGuid, NULL, (VOID **)&mAcpiTableProtocol);
   if (EFI_ERROR (Status)) {
     DEBUG ((DEBUG_INFO, "[%a] Locate gEfiAcpiTableProtocolGuid failed with status: [%r].\n", __func__, Status));
     return NULL;
@@ -76,18 +76,18 @@ SearchAcpiTablePointer (
   //
   // Find ACPI table RSD_PTR from the system table.
   //
-  Status = EfiGetSystemConfigurationTable (&gEfiAcpiTableGuid, (VOID **) &Rsdp);
+  Status = EfiGetSystemConfigurationTable (&gEfiAcpiTableGuid, (VOID **)&Rsdp);
   if (EFI_ERROR (Status)) {
-    Status = EfiGetSystemConfigurationTable (&gEfiAcpi10TableGuid, (VOID **) &Rsdp);
+    Status = EfiGetSystemConfigurationTable (&gEfiAcpi10TableGuid, (VOID **)&Rsdp);
   }
 
   if (EFI_ERROR (Status) || (Rsdp == NULL)) {
     DEBUG ((DEBUG_INFO, "[%a] Can't find RSD_PTR from system table! \n", __func__));
     return NULL;
-  } else if (Rsdp->Revision >= EFI_ACPI_2_0_ROOT_SYSTEM_DESCRIPTION_POINTER_REVISION && Rsdp->XsdtAddress != 0) {
-    Entry = (EFI_ACPI_DESCRIPTION_HEADER *) (UINTN) Rsdp->XsdtAddress;
+  } else if ((Rsdp->Revision >= EFI_ACPI_2_0_ROOT_SYSTEM_DESCRIPTION_POINTER_REVISION) && (Rsdp->XsdtAddress != 0)) {
+    Entry = (EFI_ACPI_DESCRIPTION_HEADER *)(UINTN)Rsdp->XsdtAddress;
   } else if (Rsdp->RsdtAddress != 0) {
-    Entry = (EFI_ACPI_DESCRIPTION_HEADER *) (UINTN) Rsdp->RsdtAddress;
+    Entry = (EFI_ACPI_DESCRIPTION_HEADER *)(UINTN)Rsdp->RsdtAddress;
   }
 
   if (Entry == NULL) {
@@ -106,11 +106,11 @@ SearchAcpiTablePointer (
 **/
 VOID
 AcpiPlatformChecksum (
-  IN UINT8        *Buffer,
-  IN UINTN        Size
+  IN UINT8  *Buffer,
+  IN UINTN  Size
   )
 {
-  UINTN ChecksumOffset;
+  UINTN  ChecksumOffset;
 
   if (Buffer == NULL) {
     return;
@@ -149,8 +149,8 @@ AcpiPlatformChecksum (
 EFI_STATUS
 EFIAPI
 InstallPhatTable (
-  IN  VOID        *InfoBlock,
-  IN  UINTN       InfoBlockSize
+  IN  VOID   *InfoBlock,
+  IN  UINTN  InfoBlockSize
   )
 {
   EFI_STATUS                   Status;
@@ -176,7 +176,7 @@ InstallPhatTable (
 
   AcpiEntry = SearchAcpiTablePointer ();
   if (AcpiEntry == NULL) {
-    DEBUG((DEBUG_ERROR, "[%a] ACPI table pointer not found\n", __func__));
+    DEBUG ((DEBUG_ERROR, "[%a] ACPI table pointer not found\n", __func__));
     return EFI_NOT_FOUND;
   }
 
@@ -196,15 +196,15 @@ InstallPhatTable (
   // Search ACPI table for PHAT
   while (!EFI_ERROR (Status)) {
     Status = AcpiSdtProtocol->GetAcpiTable (
-                                 TableIndex,
-                                 (EFI_ACPI_SDT_HEADER **)&TableHeader,
-                                 &TableVersion,
-                                 &TableKey
-                                 );
+                                TableIndex,
+                                (EFI_ACPI_SDT_HEADER **)&TableHeader,
+                                &TableVersion,
+                                &TableKey
+                                );
     if (!EFI_ERROR (Status)) {
       TableIndex++;
 
-      if (((EFI_ACPI_SDT_HEADER *) TableHeader)->Signature ==
+      if (((EFI_ACPI_SDT_HEADER *)TableHeader)->Signature ==
           EFI_ACPI_6_5_PLATFORM_HEALTH_ASSESSMENT_TABLE_SIGNATURE)
       {
         DEBUG ((DEBUG_INFO, "[%a] Existing Phat AcpiTable is found.\n", __func__));
@@ -217,9 +217,9 @@ InstallPhatTable (
     //
     // A PHAT is already in the ACPI table, update existing table and re-install
     //
-    PhatHeader = (EFI_ACPI_DESCRIPTION_HEADER *) TableHeader;
-    PhatLen    = PhatHeader->Length + (UINT32) InfoBlockSize;
-    PhatTable  = (UINT8 *) AllocateZeroPool (PhatLen);
+    PhatHeader = (EFI_ACPI_DESCRIPTION_HEADER *)TableHeader;
+    PhatLen    = PhatHeader->Length + (UINT32)InfoBlockSize;
+    PhatTable  = (UINT8 *)AllocateZeroPool (PhatLen);
     if (PhatTable == NULL) {
       DEBUG ((DEBUG_ERROR, "[%a] Failed to allocated new PHAT pool with.\n", __func__));
       return EFI_OUT_OF_RESOURCES;
@@ -232,16 +232,16 @@ InstallPhatTable (
     CopyMem (PhatTable + PhatHeader->Length, InfoBlock, InfoBlockSize);
 
     // Update the PHAT head pointer.
-    PhatHeader = (EFI_ACPI_DESCRIPTION_HEADER *) PhatTable;
+    PhatHeader = (EFI_ACPI_DESCRIPTION_HEADER *)PhatTable;
 
     // Update the length field to found table plus appended new data
     PhatHeader->Length = PhatLen;
 
     // Uninstall the origin PHAT from the ACPI table.
     Status = mAcpiTableProtocol->UninstallAcpiTable (
-                                    mAcpiTableProtocol,
-                                    TableKey
-                                    );
+                                   mAcpiTableProtocol,
+                                   TableKey
+                                   );
     ASSERT_EFI_ERROR (Status);
 
     if (EFI_ERROR (Status)) {
@@ -258,7 +258,8 @@ InstallPhatTable (
       DEBUG ((DEBUG_ERROR, "[%a] Failed to allocate new PHAT pool.\n", __func__));
       return EFI_OUT_OF_RESOURCES;
     }
-    PhatHeader = (EFI_ACPI_DESCRIPTION_HEADER *) PhatTable;
+
+    PhatHeader = (EFI_ACPI_DESCRIPTION_HEADER *)PhatTable;
 
     // Initialize the header of the Platform Health Assessment Table.
     InitPhatTableHeader (PhatHeader, AcpiEntry->OemId, &AcpiEntry->OemTableId);
@@ -270,7 +271,7 @@ InstallPhatTable (
   }
 
   // Update table checksum
-  AcpiPlatformChecksum ((UINT8 *) PhatTable, ((EFI_ACPI_DESCRIPTION_HEADER *) PhatHeader)->Length);
+  AcpiPlatformChecksum ((UINT8 *)PhatTable, ((EFI_ACPI_DESCRIPTION_HEADER *)PhatHeader)->Length);
 
   // Install or update the Phat table.
   Status = mAcpiTableProtocol->InstallAcpiTable (

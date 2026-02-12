@@ -34,9 +34,9 @@ extern BOOLEAN                    mEfiAtRuntime;
 EFI_STATUS
 EFIAPI
 VarLibExitBootServicesCallback (
-  IN      CONST EFI_GUID   *Protocol,
-  IN      VOID             *Interface,
-  IN      EFI_HANDLE        Handle
+  IN      CONST EFI_GUID  *Protocol,
+  IN      VOID            *Interface,
+  IN      EFI_HANDLE      Handle
   )
 {
   mEfiAtRuntime = TRUE;
@@ -58,17 +58,17 @@ VarLibExitBootServicesCallback (
 EFI_STATUS
 EFIAPI
 TraditionalMmVariableWriteLibConstructor (
-  IN EFI_HANDLE         ImageHandle,
-  IN EFI_SYSTEM_TABLE   *SystemTable
+  IN EFI_HANDLE        ImageHandle,
+  IN EFI_SYSTEM_TABLE  *SystemTable
   )
 {
-  EFI_STATUS    Status;
-  VOID          *Registration = NULL;
+  EFI_STATUS  Status;
+  VOID        *Registration = NULL;
 
   //
   // Locate SmmVariableProtocol.
   //
-  Status = gSmst->SmmLocateProtocol (&gEfiSmmVariableProtocolGuid, NULL, (VOID **) &mVariableWriteLibSmmVariable);
+  Status = gSmst->SmmLocateProtocol (&gEfiSmmVariableProtocolGuid, NULL, (VOID **)&mVariableWriteLibSmmVariable);
   ASSERT_EFI_ERROR (Status);
 
   //

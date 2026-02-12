@@ -30,8 +30,8 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 UINTN
 EFIAPI
 GetPlatformMtrrCacheData (
-  OUT VARIABLE_MTRR_INFO **CheckedMtrrs,
-  IN  BOOT_POINT         Boot
+  OUT VARIABLE_MTRR_INFO  **CheckedMtrrs,
+  IN  BOOT_POINT          Boot
 
   )
 {

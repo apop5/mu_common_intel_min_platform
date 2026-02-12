@@ -20,14 +20,14 @@ GLOBAL_REMOVE_IF_UNREFERENCED EFI_GUID  *mTerminalType[] = {
   &gEfiTtyTermGuid
 };
 
-GLOBAL_REMOVE_IF_UNREFERENCED SERIAL_DEVICE_PATH mSerialDevicePath = {
+GLOBAL_REMOVE_IF_UNREFERENCED SERIAL_DEVICE_PATH  mSerialDevicePath = {
   {
     {
       HARDWARE_DEVICE_PATH,
       HW_VENDOR_DP,
       {
-        (UINT8) sizeof (VENDOR_DEVICE_PATH),
-        (UINT8) ((sizeof (VENDOR_DEVICE_PATH)) >> 8)
+        (UINT8)sizeof (VENDOR_DEVICE_PATH),
+        (UINT8)((sizeof (VENDOR_DEVICE_PATH)) >> 8)
       }
     },
     EDKII_SERIAL_PORT_LIB_VENDOR_GUID
@@ -37,8 +37,8 @@ GLOBAL_REMOVE_IF_UNREFERENCED SERIAL_DEVICE_PATH mSerialDevicePath = {
       MESSAGING_DEVICE_PATH,
       MSG_UART_DP,
       {
-        (UINT8) sizeof (UART_DEVICE_PATH),
-        (UINT8) ((sizeof (UART_DEVICE_PATH)) >> 8)
+        (UINT8)sizeof (UART_DEVICE_PATH),
+        (UINT8)((sizeof (UART_DEVICE_PATH)) >> 8)
       }
     },
     0,                  // Reserved
@@ -52,8 +52,8 @@ GLOBAL_REMOVE_IF_UNREFERENCED SERIAL_DEVICE_PATH mSerialDevicePath = {
       MESSAGING_DEVICE_PATH,
       MSG_VENDOR_DP,
       {
-        (UINT8) (sizeof (VENDOR_DEVICE_PATH)),
-        (UINT8) ((sizeof (VENDOR_DEVICE_PATH)) >> 8),
+        (UINT8)(sizeof (VENDOR_DEVICE_PATH)),
+        (UINT8)((sizeof (VENDOR_DEVICE_PATH)) >> 8),
       }
     },
     DEVICE_PATH_MESSAGING_PC_ANSI
@@ -71,7 +71,7 @@ AddSerialTerminal (
   VOID
   )
 {
-  UINT8   DefaultTerminalType;
+  UINT8  DefaultTerminalType;
 
   //
   // Update the Terminal Device Configuration Parameters
@@ -81,31 +81,33 @@ AddSerialTerminal (
   mSerialDevicePath.Uart.Parity   = PcdGet8 (PcdUartDefaultParity);
   mSerialDevicePath.Uart.StopBits = PcdGet8 (PcdUartDefaultStopBits);
   DefaultTerminalType             = PcdGet8 (PcdDefaultTerminalType);
-  DEBUG ((DEBUG_INFO, "[AddSerialPortTerminal] [%d, %d, %d, %d, %d]\n",
-      (int) mSerialDevicePath.Uart.BaudRate,
-      (int) mSerialDevicePath.Uart.DataBits,
-      (int) mSerialDevicePath.Uart.Parity,
-      (int) mSerialDevicePath.Uart.StopBits,
-      (int) DefaultTerminalType));
+  DEBUG ((
+    DEBUG_INFO,
+    "[AddSerialPortTerminal] [%d, %d, %d, %d, %d]\n",
+    (int)mSerialDevicePath.Uart.BaudRate,
+    (int)mSerialDevicePath.Uart.DataBits,
+    (int)mSerialDevicePath.Uart.Parity,
+    (int)mSerialDevicePath.Uart.StopBits,
+    (int)DefaultTerminalType
+    ));
 
   if (DefaultTerminalType < (sizeof (mTerminalType) / sizeof (mTerminalType[0]))) {
     CopyMem (
-      (VOID *) &(mSerialDevicePath.TerminalType.Guid),
-      (VOID *) mTerminalType[DefaultTerminalType],
+      (VOID *)&(mSerialDevicePath.TerminalType.Guid),
+      (VOID *)mTerminalType[DefaultTerminalType],
       sizeof (EFI_GUID)
       );
   } else {
-    DEBUG ((DEBUG_WARN, "PcdDefaultTerminalType has invalid value: %d\n", (int) DefaultTerminalType));
+    DEBUG ((DEBUG_WARN, "PcdDefaultTerminalType has invalid value: %d\n", (int)DefaultTerminalType));
   }
 
   //
   // Append Serial Terminal into "ConIn", "ConOut", and "ErrOut"
   //
-  EfiBootManagerUpdateConsoleVariable (ConOut, (EFI_DEVICE_PATH_PROTOCOL *) &mSerialDevicePath, NULL);
-  EfiBootManagerUpdateConsoleVariable (ConIn, (EFI_DEVICE_PATH_PROTOCOL *) &mSerialDevicePath, NULL);
-  EfiBootManagerUpdateConsoleVariable (ErrOut, (EFI_DEVICE_PATH_PROTOCOL *) &mSerialDevicePath, NULL);
+  EfiBootManagerUpdateConsoleVariable (ConOut, (EFI_DEVICE_PATH_PROTOCOL *)&mSerialDevicePath, NULL);
+  EfiBootManagerUpdateConsoleVariable (ConIn, (EFI_DEVICE_PATH_PROTOCOL *)&mSerialDevicePath, NULL);
+  EfiBootManagerUpdateConsoleVariable (ErrOut, (EFI_DEVICE_PATH_PROTOCOL *)&mSerialDevicePath, NULL);
 }
-
 
 /**
   Constructor for the Serial Port Terminal Device library.
@@ -124,7 +126,7 @@ SerialPortTerminalLibConstructor (
 {
   DEBUG ((DEBUG_INFO, "[SerialPortTerminalLibConstructor]\n"));
 
-  AddSerialTerminal();
+  AddSerialTerminal ();
 
   return EFI_SUCCESS;
 }

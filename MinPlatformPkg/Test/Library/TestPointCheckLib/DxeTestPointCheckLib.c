@@ -27,14 +27,14 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 #include <Library/PlatformConfigCheckLib.h>
 // MU_CHANGE [END]
 
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_GUID mTestPointSmmCommunicationGuid = TEST_POINT_SMM_COMMUNICATION_GUID;
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_GUID  mTestPointSmmCommunicationGuid = TEST_POINT_SMM_COMMUNICATION_GUID;
 
 VOID
 TestPointDumpGcd (
-  OUT EFI_GCD_MEMORY_SPACE_DESCRIPTOR **GcdMemoryMap,  OPTIONAL
-  OUT UINTN                           *GcdMemoryMapNumberOfDescriptors,  OPTIONAL
-  OUT EFI_GCD_IO_SPACE_DESCRIPTOR     **GcdIoMap,  OPTIONAL
-  OUT UINTN                           *GcdIoMapNumberOfDescriptors,  OPTIONAL
+  OUT EFI_GCD_MEMORY_SPACE_DESCRIPTOR **GcdMemoryMap, OPTIONAL
+  OUT UINTN                           *GcdMemoryMapNumberOfDescriptors, OPTIONAL
+  OUT EFI_GCD_IO_SPACE_DESCRIPTOR     **GcdIoMap, OPTIONAL
+  OUT UINTN                           *GcdIoMapNumberOfDescriptors, OPTIONAL
   IN  BOOLEAN                         DumpPrint
   );
 
@@ -171,10 +171,10 @@ TestPointCheckPciSpeed (
 GLOBAL_REMOVE_IF_UNREFERENCED ADAPTER_INFO_PLATFORM_TEST_POINT_STRUCT  mTestPointStruct = {
   PLATFORM_TEST_POINT_VERSION,
   PLATFORM_TEST_POINT_ROLE_PLATFORM_IBV,
-  {TEST_POINT_IMPLEMENTATION_ID_PLATFORM_DXE},
+  { TEST_POINT_IMPLEMENTATION_ID_PLATFORM_DXE },
   TEST_POINT_FEATURE_SIZE,
-  {0}, // FeaturesImplemented
-  {0}, // FeaturesVerified
+  { 0 }, // FeaturesImplemented
+  { 0 }, // FeaturesVerified
   0,
 };
 
@@ -208,7 +208,7 @@ TestPointPciEnumerationDonePciBusMasterDisabled (
 
   Result = TRUE;
   Status = TestPointCheckPciBusMaster ();
-  if (EFI_ERROR(Status)) {
+  if (EFI_ERROR (Status)) {
     Result = FALSE;
   }
 
@@ -253,7 +253,7 @@ TestPointPciEnumerationDonePciResourceAllocated (
 
   Result = TRUE;
   Status = TestPointCheckPciResource ();
-  if (EFI_ERROR(Status)) {
+  if (EFI_ERROR (Status)) {
     Result = FALSE;
   }
 
@@ -303,8 +303,8 @@ TestPointEndOfDxeDmaAcpiTableFunctional (
       PLATFORM_TEST_POINT_ROLE_PLATFORM_IBV,
       TEST_POINT_IMPLEMENTATION_ID_PLATFORM_DXE,
       TEST_POINT_BYTE3_END_OF_DXE_DMA_ACPI_TABLE_FUNCTIONAL_ERROR_CODE \
-        TEST_POINT_END_OF_DXE \
-        TEST_POINT_BYTE3_END_OF_DXE_DMA_ACPI_TABLE_FUNCTIONAL_ERROR_STRING
+      TEST_POINT_END_OF_DXE \
+      TEST_POINT_BYTE3_END_OF_DXE_DMA_ACPI_TABLE_FUNCTIONAL_ERROR_STRING
       );
     Status = EFI_INVALID_PARAMETER;
   } else {
@@ -349,7 +349,7 @@ TestPointEndOfDxeDmaProtectionEnabled (
 
   Result = TRUE;
   Status = TestPointVtdEngine ();
-  if (EFI_ERROR(Status)) {
+  if (EFI_ERROR (Status)) {
     Result = FALSE;
   }
 
@@ -394,7 +394,7 @@ TestPointEndOfDxeNoThirdPartyPciOptionRom (
 
   Result = TRUE;
   Status = TestPointCheckLoadedImage ();
-  if (EFI_ERROR(Status)) {
+  if (EFI_ERROR (Status)) {
     Result = FALSE;
   }
 
@@ -439,7 +439,7 @@ TestPointDxeSmmReadyToLockSmramAligned (
 
   Result = TRUE;
   Status = TestPointCheckSmmInfo ();
-  if (EFI_ERROR(Status)) {
+  if (EFI_ERROR (Status)) {
     Result = FALSE;
   }
 
@@ -490,8 +490,8 @@ TestPointDxeSmmReadyToLockWsmtTableFunctional (
       PLATFORM_TEST_POINT_ROLE_PLATFORM_IBV,
       TEST_POINT_IMPLEMENTATION_ID_PLATFORM_DXE,
       TEST_POINT_BYTE7_DXE_SMM_READY_TO_LOCK_WSMT_TABLE_FUNCTIONAL_ERROR_CODE \
-        TEST_POINT_DXE_SMM_READY_TO_LOCK \
-        TEST_POINT_BYTE7_DXE_SMM_READY_TO_LOCK_WSMT_TABLE_FUNCTIONAL_ERROR_STRING
+      TEST_POINT_DXE_SMM_READY_TO_LOCK \
+      TEST_POINT_BYTE7_DXE_SMM_READY_TO_LOCK_WSMT_TABLE_FUNCTIONAL_ERROR_STRING
       );
     Status = EFI_INVALID_PARAMETER;
   } else {
@@ -525,27 +525,27 @@ TestPointDxeSmmReadyToBootSmmPageProtection (
   VOID
   )
 {
-  EFI_MEMORY_DESCRIPTOR                               *UefiMemoryMap;
-  UINTN                                               UefiMemoryMapSize;
-  UINTN                                               UefiDescriptorSize;
-  EFI_GCD_MEMORY_SPACE_DESCRIPTOR                     *GcdMemoryMap;
-  EFI_GCD_IO_SPACE_DESCRIPTOR                         *GcdIoMap;
-  UINTN                                               GcdMemoryMapNumberOfDescriptors;
-  UINTN                                               GcdIoMapNumberOfDescriptors;
-  EFI_MEMORY_ATTRIBUTES_TABLE                         *MemoryAttributesTable;
-  UINTN                                               MemoryAttributesTableSize;
-  EFI_STATUS                                          Status;
-  UINTN                                               CommSize;
-  UINT64                                              LongCommSize;
-  UINT8                                               *CommBuffer;
-  EFI_SMM_COMMUNICATE_HEADER                          *CommHeader;
-  EFI_SMM_COMMUNICATION_PROTOCOL                      *SmmCommunication;
-  UINTN                                               MinimalSizeNeeded;
-  EDKII_PI_SMM_COMMUNICATION_REGION_TABLE             *PiSmmCommunicationRegionTable;
-  UINT32                                              Index;
-  EFI_MEMORY_DESCRIPTOR                               *Entry;
-  UINTN                                               Size;
-  TEST_POINT_SMM_COMMUNICATION_UEFI_GCD_MAP_INFO      *CommData;
+  EFI_MEMORY_DESCRIPTOR                           *UefiMemoryMap;
+  UINTN                                           UefiMemoryMapSize;
+  UINTN                                           UefiDescriptorSize;
+  EFI_GCD_MEMORY_SPACE_DESCRIPTOR                 *GcdMemoryMap;
+  EFI_GCD_IO_SPACE_DESCRIPTOR                     *GcdIoMap;
+  UINTN                                           GcdMemoryMapNumberOfDescriptors;
+  UINTN                                           GcdIoMapNumberOfDescriptors;
+  EFI_MEMORY_ATTRIBUTES_TABLE                     *MemoryAttributesTable;
+  UINTN                                           MemoryAttributesTableSize;
+  EFI_STATUS                                      Status;
+  UINTN                                           CommSize;
+  UINT64                                          LongCommSize;
+  UINT8                                           *CommBuffer;
+  EFI_SMM_COMMUNICATE_HEADER                      *CommHeader;
+  EFI_SMM_COMMUNICATION_PROTOCOL                  *SmmCommunication;
+  UINTN                                           MinimalSizeNeeded;
+  EDKII_PI_SMM_COMMUNICATION_REGION_TABLE         *PiSmmCommunicationRegionTable;
+  UINT32                                          Index;
+  EFI_MEMORY_DESCRIPTOR                           *Entry;
+  UINTN                                           Size;
+  TEST_POINT_SMM_COMMUNICATION_UEFI_GCD_MAP_INFO  *CommData;
 
   if ((mFeatureImplemented[6] & TEST_POINT_BYTE6_SMM_READY_TO_BOOT_SMM_PAGE_LEVEL_PROTECTION) == 0) {
     return EFI_SUCCESS;
@@ -556,63 +556,66 @@ TestPointDxeSmmReadyToBootSmmPageProtection (
   TestPointDumpUefiMemoryMap (&UefiMemoryMap, &UefiMemoryMapSize, &UefiDescriptorSize, FALSE);
   TestPointDumpGcd (&GcdMemoryMap, &GcdMemoryMapNumberOfDescriptors, &GcdIoMap, &GcdIoMapNumberOfDescriptors, FALSE);
 
-  MemoryAttributesTable = NULL;
+  MemoryAttributesTable     = NULL;
   MemoryAttributesTableSize = 0;
-  Status = EfiGetSystemConfigurationTable (&gEfiMemoryAttributesTableGuid, (VOID **)&MemoryAttributesTable);
+  Status                    = EfiGetSystemConfigurationTable (&gEfiMemoryAttributesTableGuid, (VOID **)&MemoryAttributesTable);
   if (!EFI_ERROR (Status)) {
-    MemoryAttributesTableSize = sizeof(EFI_MEMORY_ATTRIBUTES_TABLE) + MemoryAttributesTable->DescriptorSize * MemoryAttributesTable->NumberOfEntries;
+    MemoryAttributesTableSize = sizeof (EFI_MEMORY_ATTRIBUTES_TABLE) + MemoryAttributesTable->DescriptorSize * MemoryAttributesTable->NumberOfEntries;
   }
 
-  Status = gBS->LocateProtocol(&gEfiSmmCommunicationProtocolGuid, NULL, (VOID **)&SmmCommunication);
-  if (EFI_ERROR(Status)) {
+  Status = gBS->LocateProtocol (&gEfiSmmCommunicationProtocolGuid, NULL, (VOID **)&SmmCommunication);
+  if (EFI_ERROR (Status)) {
     DEBUG ((DEBUG_INFO, "TestPointDxeSmmReadyToBootSmmPageProtection: Locate SmmCommunication protocol - %r\n", Status));
     return EFI_SUCCESS;
   }
 
-  MinimalSizeNeeded = OFFSET_OF(EFI_SMM_COMMUNICATE_HEADER, Data) +
-                      sizeof(TEST_POINT_SMM_COMMUNICATION_UEFI_GCD_MAP_INFO) +
+  MinimalSizeNeeded = OFFSET_OF (EFI_SMM_COMMUNICATE_HEADER, Data) +
+                      sizeof (TEST_POINT_SMM_COMMUNICATION_UEFI_GCD_MAP_INFO) +
                       UefiMemoryMapSize +
-                      GcdMemoryMapNumberOfDescriptors * sizeof(EFI_GCD_MEMORY_SPACE_DESCRIPTOR) +
-                      GcdIoMapNumberOfDescriptors * sizeof(EFI_GCD_IO_SPACE_DESCRIPTOR) +
+                      GcdMemoryMapNumberOfDescriptors * sizeof (EFI_GCD_MEMORY_SPACE_DESCRIPTOR) +
+                      GcdIoMapNumberOfDescriptors * sizeof (EFI_GCD_IO_SPACE_DESCRIPTOR) +
                       MemoryAttributesTableSize;
 
-  Status = EfiGetSystemConfigurationTable(
+  Status = EfiGetSystemConfigurationTable (
              &gEdkiiPiSmmCommunicationRegionTableGuid,
              (VOID **)&PiSmmCommunicationRegionTable
              );
-  if (EFI_ERROR(Status)) {
+  if (EFI_ERROR (Status)) {
     DEBUG ((DEBUG_INFO, "TestPointDxeSmmReadyToBootSmmPageProtection: Get PiSmmCommunicationRegionTable - %r\n", Status));
     return EFI_SUCCESS;
   }
-  ASSERT(PiSmmCommunicationRegionTable != NULL);
+
+  ASSERT (PiSmmCommunicationRegionTable != NULL);
   Entry = (EFI_MEMORY_DESCRIPTOR *)(PiSmmCommunicationRegionTable + 1);
-  Size = 0;
+  Size  = 0;
   for (Index = 0; Index < PiSmmCommunicationRegionTable->NumberOfEntries; Index++) {
     if (Entry->Type == EfiConventionalMemory) {
-      Size = EFI_PAGES_TO_SIZE((UINTN)Entry->NumberOfPages);
+      Size = EFI_PAGES_TO_SIZE ((UINTN)Entry->NumberOfPages);
       if (Size >= MinimalSizeNeeded) {
         break;
       }
     }
+
     Entry = (EFI_MEMORY_DESCRIPTOR *)((UINT8 *)Entry + PiSmmCommunicationRegionTable->DescriptorSize);
   }
-  ASSERT(Index < PiSmmCommunicationRegionTable->NumberOfEntries);
+
+  ASSERT (Index < PiSmmCommunicationRegionTable->NumberOfEntries);
   CommBuffer = (UINT8 *)(UINTN)Entry->PhysicalStart;
 
   CommHeader = (EFI_SMM_COMMUNICATE_HEADER *)&CommBuffer[0];
-  CopyMem(&CommHeader->HeaderGuid, &mTestPointSmmCommunicationGuid, sizeof(mTestPointSmmCommunicationGuid));
-  CommHeader->MessageLength = MinimalSizeNeeded - OFFSET_OF(EFI_SMM_COMMUNICATE_HEADER, Data);
+  CopyMem (&CommHeader->HeaderGuid, &mTestPointSmmCommunicationGuid, sizeof (mTestPointSmmCommunicationGuid));
+  CommHeader->MessageLength = MinimalSizeNeeded - OFFSET_OF (EFI_SMM_COMMUNICATE_HEADER, Data);
 
-  CommData = (TEST_POINT_SMM_COMMUNICATION_UEFI_GCD_MAP_INFO *)&CommBuffer[OFFSET_OF(EFI_SMM_COMMUNICATE_HEADER, Data)];
-  CommData->Header.Version      = TEST_POINT_SMM_COMMUNICATION_VERSION;
-  CommData->Header.FuncId       = TEST_POINT_SMM_COMMUNICATION_FUNC_ID_UEFI_GCD_MAP_INFO;
-  CommData->Header.Size         = CommHeader->MessageLength;
-  CommData->UefiMemoryMapOffset = sizeof(TEST_POINT_SMM_COMMUNICATION_UEFI_GCD_MAP_INFO);
-  CommData->UefiMemoryMapSize   = UefiMemoryMapSize;
-  CommData->GcdMemoryMapOffset  = CommData->UefiMemoryMapOffset + CommData->UefiMemoryMapSize;
-  CommData->GcdMemoryMapSize    = GcdMemoryMapNumberOfDescriptors * sizeof(EFI_GCD_MEMORY_SPACE_DESCRIPTOR);
-  CommData->GcdIoMapOffset      = CommData->GcdMemoryMapOffset + CommData->GcdMemoryMapSize;
-  CommData->GcdIoMapSize        = GcdIoMapNumberOfDescriptors * sizeof(EFI_GCD_IO_SPACE_DESCRIPTOR);
+  CommData                                 = (TEST_POINT_SMM_COMMUNICATION_UEFI_GCD_MAP_INFO *)&CommBuffer[OFFSET_OF (EFI_SMM_COMMUNICATE_HEADER, Data)];
+  CommData->Header.Version                 = TEST_POINT_SMM_COMMUNICATION_VERSION;
+  CommData->Header.FuncId                  = TEST_POINT_SMM_COMMUNICATION_FUNC_ID_UEFI_GCD_MAP_INFO;
+  CommData->Header.Size                    = CommHeader->MessageLength;
+  CommData->UefiMemoryMapOffset            = sizeof (TEST_POINT_SMM_COMMUNICATION_UEFI_GCD_MAP_INFO);
+  CommData->UefiMemoryMapSize              = UefiMemoryMapSize;
+  CommData->GcdMemoryMapOffset             = CommData->UefiMemoryMapOffset + CommData->UefiMemoryMapSize;
+  CommData->GcdMemoryMapSize               = GcdMemoryMapNumberOfDescriptors * sizeof (EFI_GCD_MEMORY_SPACE_DESCRIPTOR);
+  CommData->GcdIoMapOffset                 = CommData->GcdMemoryMapOffset + CommData->GcdMemoryMapSize;
+  CommData->GcdIoMapSize                   = GcdIoMapNumberOfDescriptors * sizeof (EFI_GCD_IO_SPACE_DESCRIPTOR);
   CommData->UefiMemoryAttributeTableOffset = CommData->GcdIoMapOffset + CommData->GcdIoMapSize;
   CommData->UefiMemoryAttributeTableSize   = MemoryAttributesTableSize;
 
@@ -649,8 +652,8 @@ TestPointDxeSmmReadyToBootSmmPageProtection (
     return EFI_SUCCESS;
   }
 
-  Status = SmmCommunication->Communicate(SmmCommunication, CommBuffer, &CommSize);
-  if (EFI_ERROR(Status)) {
+  Status = SmmCommunication->Communicate (SmmCommunication, CommBuffer, &CommSize);
+  if (EFI_ERROR (Status)) {
     DEBUG ((DEBUG_INFO, "TestPointDxeSmmReadyToBootSmmPageProtection: SmmCommunication - %r\n", Status));
     return EFI_SUCCESS;
   }
@@ -687,7 +690,7 @@ TestPointDxeSmmReadyToBootSmiHandlerInstrument (
 
   Result = TRUE;
   Status = TestPointCheckSmiHandlerInstrument ();
-  if (EFI_ERROR(Status)) {
+  if (EFI_ERROR (Status)) {
     Result = FALSE;
   }
 
@@ -732,7 +735,7 @@ TestPointReadyToBootAcpiTableFunctional (
 
   Result = TRUE;
   Status = TestPointCheckAcpi ();
-  if (EFI_ERROR(Status)) {
+  if (EFI_ERROR (Status)) {
     Result = FALSE;
   }
 
@@ -777,7 +780,7 @@ TestPointReadyToBootGcdResourceFunctional (
 
   Result = TRUE;
   Status = TestPointCheckAcpiGcdResource ();
-  if (EFI_ERROR(Status)) {
+  if (EFI_ERROR (Status)) {
     Result = FALSE;
   }
 
@@ -823,12 +826,13 @@ TestPointReadyToBootMemoryTypeInformationFunctional (
 
   Result = TRUE;
   Status = TestPointCheckMemoryTypeInformation ();
-  if (EFI_ERROR(Status)) {
+  if (EFI_ERROR (Status)) {
     Result = FALSE;
   }
+
   TestPointDumpUefiMemoryMap (NULL, NULL, NULL, TRUE);
   Status = TestPointCheckUefiMemoryMap ();
-  if (EFI_ERROR(Status)) {
+  if (EFI_ERROR (Status)) {
     Result = FALSE;
   }
 
@@ -876,7 +880,7 @@ TestPointReadyToBootUefiMemoryAttributeTableFunctional (
   TestPointDumpUefiMemoryMap (NULL, NULL, NULL, TRUE);
   TestPointDumpGcd (NULL, NULL, NULL, NULL, TRUE);
   Status = TestPointCheckUefiMemAttribute ();
-  if (EFI_ERROR(Status)) {
+  if (EFI_ERROR (Status)) {
     Result = FALSE;
   }
 
@@ -923,7 +927,7 @@ TestPointReadyToBootUefiBootVariableFunctional (
   TestPointDumpDevicePath ();
   TestPointDumpVariable ();
   Status = TestPointCheckBootVariable ();
-  if (EFI_ERROR(Status)) {
+  if (EFI_ERROR (Status)) {
     Result = FALSE;
   }
 
@@ -970,7 +974,7 @@ TestPointReadyToBootUefiConsoleVariableFunctional (
   TestPointDumpDevicePath ();
   TestPointDumpVariable ();
   Status = TestPointCheckConsoleVariable ();
-  if (EFI_ERROR(Status)) {
+  if (EFI_ERROR (Status)) {
     Result = FALSE;
   }
 
@@ -1015,7 +1019,7 @@ TestPointReadyToBootHstiTableFunctional (
 
   Result = TRUE;
   Status = TestPointCheckHsti ();
-  if (EFI_ERROR(Status)) {
+  if (EFI_ERROR (Status)) {
     Result = FALSE;
   }
 
@@ -1060,7 +1064,7 @@ TestPointReadyToBootEsrtTableFunctional (
 
   Result = TRUE;
   Status = TestPointCheckEsrt ();
-  if (EFI_ERROR(Status)) {
+  if (EFI_ERROR (Status)) {
     Result = FALSE;
   }
 
@@ -1105,7 +1109,7 @@ TestPointReadyToBootUefiSecureBootEnabled (
 
   Result = TRUE;
   Status = TestPointCheckUefiSecureBoot ();
-  if (EFI_ERROR(Status)) {
+  if (EFI_ERROR (Status)) {
     Result = FALSE;
   }
 
@@ -1149,7 +1153,7 @@ TestPointReadyToBootPiSignedFvBootEnabled (
 
   Result = TRUE;
   Status = TestPointCheckPiSignedFvBoot ();
-  if (EFI_ERROR(Status)) {
+  if (EFI_ERROR (Status)) {
     Result = FALSE;
   }
 
@@ -1194,7 +1198,7 @@ TestPointReadyToBootTcgTrustedBootEnabled (
 
   Result = TRUE;
   Status = TestPointCheckTcgTrustedBoot ();
-  if (EFI_ERROR(Status)) {
+  if (EFI_ERROR (Status)) {
     Result = FALSE;
   }
 
@@ -1239,7 +1243,7 @@ TestPointReadyToBootTcgMorEnabled (
 
   Result = TRUE;
   Status = TestPointCheckTcgMor ();
-  if (EFI_ERROR(Status)) {
+  if (EFI_ERROR (Status)) {
     Result = FALSE;
   }
 
@@ -1257,6 +1261,7 @@ TestPointReadyToBootTcgMorEnabled (
 }
 
 // MU_CHANGE - START
+
 /**
   This service verifies MTRR settings at Ready to Boot
 
@@ -1286,7 +1291,7 @@ TestPointReadyToBootMtrrFunctional (
   DEBUG ((DEBUG_INFO, "======== TestPointReadyToBootMtrrFunctional - Enter\n"));
   Result = TRUE;
   Status = TestPointCheckMtrr ();
-  if (EFI_ERROR(Status)) {
+  if (EFI_ERROR (Status)) {
     Result = FALSE;
   }
 
@@ -1302,6 +1307,7 @@ TestPointReadyToBootMtrrFunctional (
   DEBUG ((DEBUG_INFO, "======== TestPointReadyToBootMtrrFunctional - Exit\n"));
   return EFI_SUCCESS;
 }
+
 // MU_CHANGE - END
 
 /**
@@ -1371,19 +1377,19 @@ TestPointPciEnumerationDonePcieGenSpeed (
 **/
 VOID
 InitData (
-  IN UINT32                   Role
+  IN UINT32  Role
   )
 {
-  EFI_STATUS                             Status;
+  EFI_STATUS  Status;
 
-  ASSERT (PcdGetSize(PcdTestPointIbvPlatformFeature) == sizeof(mFeatureImplemented));
-  CopyMem (mFeatureImplemented, PcdGetPtr(PcdTestPointIbvPlatformFeature), sizeof(mFeatureImplemented));
+  ASSERT (PcdGetSize (PcdTestPointIbvPlatformFeature) == sizeof (mFeatureImplemented));
+  CopyMem (mFeatureImplemented, PcdGetPtr (PcdTestPointIbvPlatformFeature), sizeof (mFeatureImplemented));
 
   mTestPointStruct.Role = Role;
-  CopyMem (mTestPointStruct.FeaturesImplemented, mFeatureImplemented, sizeof(mFeatureImplemented));
+  CopyMem (mTestPointStruct.FeaturesImplemented, mFeatureImplemented, sizeof (mFeatureImplemented));
   Status = TestPointLibSetTable (
              &mTestPointStruct,
-             sizeof(mTestPointStruct)
+             sizeof (mTestPointStruct)
              );
   if (EFI_ERROR (Status)) {
     if (Status != EFI_ALREADY_STARTED) {
@@ -1403,8 +1409,8 @@ InitData (
 EFI_STATUS
 EFIAPI
 DxeTestPointCheckLibConstructor (
-  IN EFI_HANDLE       ImageHandle,
-  IN EFI_SYSTEM_TABLE *SystemTable
+  IN EFI_HANDLE        ImageHandle,
+  IN EFI_SYSTEM_TABLE  *SystemTable
   )
 {
   InitData (PLATFORM_TEST_POINT_ROLE_PLATFORM_IBV);

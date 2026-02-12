@@ -22,7 +22,8 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 #include "TestPointImageDump.h"
 
 VOID
-EFIAPI // MU_CHANGE
+EFIAPI
+// MU_CHANGE
 TestPointDumpMmLoadedImage (
   VOID
   )

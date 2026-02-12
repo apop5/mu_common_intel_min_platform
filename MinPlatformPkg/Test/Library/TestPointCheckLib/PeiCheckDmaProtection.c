@@ -25,59 +25,60 @@ CheckDrhd (
   IN EFI_ACPI_DMAR_HEADER  *Dmar
   )
 {
-  EFI_ACPI_DMAR_STRUCTURE_HEADER        *DmarStructHeader;
-  INTN                                  DmarLen;
-  EFI_ACPI_DMAR_DRHD_HEADER             *Drhd;
-  UINT32                                Reg32;
-  UINT64                                Reg64;
-  VTD_CAP_REG                           CapReg;
-  VTD_ECAP_REG                          ECapReg;
-    
+  EFI_ACPI_DMAR_STRUCTURE_HEADER  *DmarStructHeader;
+  INTN                            DmarLen;
+  EFI_ACPI_DMAR_DRHD_HEADER       *Drhd;
+  UINT32                          Reg32;
+  UINT64                          Reg64;
+  VTD_CAP_REG                     CapReg;
+  VTD_ECAP_REG                    ECapReg;
+
   //
   // Sub table
   //
-  DmarLen  = Dmar->Header.Length - sizeof(EFI_ACPI_DMAR_HEADER);
+  DmarLen          = Dmar->Header.Length - sizeof (EFI_ACPI_DMAR_HEADER);
   DmarStructHeader = (EFI_ACPI_DMAR_STRUCTURE_HEADER *)(Dmar + 1);
   while (DmarLen >= sizeof (*DmarStructHeader)) {
     switch (DmarStructHeader->Type) {
-    case EFI_ACPI_DMAR_TYPE_DRHD:
-      Drhd = (EFI_ACPI_DMAR_DRHD_HEADER *)DmarStructHeader;
+      case EFI_ACPI_DMAR_TYPE_DRHD:
+        Drhd = (EFI_ACPI_DMAR_DRHD_HEADER *)DmarStructHeader;
 
-      ECapReg.Uint64 = MmioRead64 ((UINTN)Drhd->RegisterBaseAddress + R_ECAP_REG);
-      if (ECapReg.Bits.ADMS == 1) {
-        Reg64 = MmioRead64 ((UINTN)Drhd->RegisterBaseAddress + R_RTADDR_REG);
-        if ((Reg64 & V_RTADDR_REG_TTM_ADM) != V_RTADDR_REG_TTM_ADM) {
-          DEBUG ((DEBUG_ERROR, "Abort DMA Mode is not enabled\n"));
-          return EFI_UNSUPPORTED;
+        ECapReg.Uint64 = MmioRead64 ((UINTN)Drhd->RegisterBaseAddress + R_ECAP_REG);
+        if (ECapReg.Bits.ADMS == 1) {
+          Reg64 = MmioRead64 ((UINTN)Drhd->RegisterBaseAddress + R_RTADDR_REG);
+          if ((Reg64 & V_RTADDR_REG_TTM_ADM) != V_RTADDR_REG_TTM_ADM) {
+            DEBUG ((DEBUG_ERROR, "Abort DMA Mode is not enabled\n"));
+            return EFI_UNSUPPORTED;
+          }
+
+          Reg32 = MmioRead32 ((UINTN)Drhd->RegisterBaseAddress + R_GSTS_REG);
+          if ((Reg32 & B_GSTS_REG_TE) == 0) {
+            DEBUG ((DEBUG_ERROR, "DMA remapping is not enabled\n"));
+            return EFI_UNSUPPORTED;
+          }
+
+          DEBUG ((DEBUG_INFO, "DMA remapping is enabled with Abort DMA Mode\n"));
+        } else {
+          CapReg.Uint64 = MmioRead64 ((UINTN)Drhd->RegisterBaseAddress + R_CAP_REG);
+          if ((CapReg.Bits.PLMR == 0) || (CapReg.Bits.PHMR == 0)) {
+            return EFI_UNSUPPORTED;
+          }
+
+          Reg32 = MmioRead32 ((UINTN)Drhd->RegisterBaseAddress + R_PMEN_ENABLE_REG);
+          if ((Reg32 & BIT0) == 0) {
+            return EFI_UNSUPPORTED;
+          }
         }
 
-        Reg32 = MmioRead32 ((UINTN)Drhd->RegisterBaseAddress + R_GSTS_REG);
-        if ((Reg32 & B_GSTS_REG_TE) == 0) {
-          DEBUG ((DEBUG_ERROR, "DMA remapping is not enabled\n"));
-          return EFI_UNSUPPORTED;
-        }
-
-        DEBUG ((DEBUG_INFO, "DMA remapping is enabled with Abort DMA Mode\n"));
-      } else {
-        CapReg.Uint64 = MmioRead64 ((UINTN)Drhd->RegisterBaseAddress + R_CAP_REG);
-        if (CapReg.Bits.PLMR == 0 || CapReg.Bits.PHMR == 0) {
-          return EFI_UNSUPPORTED;
-        }
-
-        Reg32 = MmioRead32 ((UINTN)Drhd->RegisterBaseAddress + R_PMEN_ENABLE_REG);
-        if ((Reg32 & BIT0) == 0) {
-          return EFI_UNSUPPORTED;
-        }
-      }
-
-      break;
-    case EFI_ACPI_DMAR_TYPE_RMRR:
-    case EFI_ACPI_DMAR_TYPE_ATSR:
-    case EFI_ACPI_DMAR_TYPE_RHSA:
-    case EFI_ACPI_DMAR_TYPE_ANDD:
-    default:
-      break;
+        break;
+      case EFI_ACPI_DMAR_TYPE_RMRR:
+      case EFI_ACPI_DMAR_TYPE_ATSR:
+      case EFI_ACPI_DMAR_TYPE_RHSA:
+      case EFI_ACPI_DMAR_TYPE_ANDD:
+      default:
+        break;
     }
+
     DmarLen         -= DmarStructHeader->Length;
     DmarStructHeader = (EFI_ACPI_DMAR_STRUCTURE_HEADER *)((UINT8 *)DmarStructHeader + DmarStructHeader->Length);
   }
@@ -102,21 +103,21 @@ TestPointVtdEngine (
              &gEdkiiVTdInfoPpiGuid,
              0,
              NULL,
-             (VOID **) &Dmar
+             (VOID **)&Dmar
              );
-  if (EFI_ERROR(Status)) {
+  if (EFI_ERROR (Status)) {
     DEBUG ((DEBUG_ERROR, "No DMAR table\n"));
   } else {
     Status = CheckDrhd (Dmar);
   }
 
-  if (EFI_ERROR(Status)) {
+  if (EFI_ERROR (Status)) {
     TestPointLibAppendErrorString (
       PLATFORM_TEST_POINT_ROLE_PLATFORM_IBV,
       TEST_POINT_IMPLEMENTATION_ID_PLATFORM_PEI,
       TEST_POINT_BYTE1_MEMORY_DISCOVERED_DMA_PROTECTION_ENABLED_ERROR_CODE \
-        TEST_POINT_MEMORY_DISCOVERED \
-        TEST_POINT_BYTE1_MEMORY_DISCOVERED_DMA_PROTECTION_ENABLED_ERROR_STRING
+      TEST_POINT_MEMORY_DISCOVERED \
+      TEST_POINT_BYTE1_MEMORY_DISCOVERED_DMA_PROTECTION_ENABLED_ERROR_STRING
       );
   }
 

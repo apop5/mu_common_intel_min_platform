@@ -25,7 +25,7 @@ TestPointCheckMtrrForPei (
   EFI_STATUS                  Status;
   VOID                        *HobList;
   EFI_HOB_HANDOFF_INFO_TABLE  *PhitHob;
-  
+
   HobList = GetHobList ();
   PhitHob = HobList;
 
@@ -40,7 +40,7 @@ TestPointCheckMtrrForPei (
              PhitHob->EfiMemoryTop - PhitHob->EfiMemoryBottom,
              CacheWriteBack
              );
-  if (EFI_ERROR(Status)) {
+  if (EFI_ERROR (Status)) {
     return Status;
   }
 
@@ -61,11 +61,11 @@ TestPointCheckMtrrForDxe (
   IN VARIABLE_MTRR  *VariableMtrr
   )
 {
-  EFI_STATUS                  Status;
-  VOID                        *HobList;
-  EFI_PEI_HOB_POINTERS        Hob;
-  EFI_HOB_RESOURCE_DESCRIPTOR *ResourceHob;
-  
+  EFI_STATUS                   Status;
+  VOID                         *HobList;
+  EFI_PEI_HOB_POINTERS         Hob;
+  EFI_HOB_RESOURCE_DESCRIPTOR  *ResourceHob;
+
   HobList = GetHobList ();
 
   //
@@ -75,24 +75,26 @@ TestPointCheckMtrrForDxe (
     if (GET_HOB_TYPE (Hob) == EFI_HOB_TYPE_RESOURCE_DESCRIPTOR) {
       ResourceHob = Hob.ResourceDescriptor;
       switch (ResourceHob->ResourceType) {
-      case EFI_RESOURCE_SYSTEM_MEMORY:
-        if (((ResourceHob->ResourceAttribute & MEMORY_ATTRIBUTE_MASK) == TESTED_MEMORY_ATTRIBUTES) ||
-            ((ResourceHob->ResourceAttribute & MEMORY_ATTRIBUTE_MASK) == INITIALIZED_MEMORY_ATTRIBUTES)) {
-          DEBUG ((DEBUG_INFO, "MTRR Checking 0x%lx 0x%lx\n", ResourceHob->PhysicalStart, ResourceHob->ResourceLength));
-          Status = TestPointCheckCacheType (
-                     Mtrrs,
-                     VariableMtrr,
-                     ResourceHob->PhysicalStart,
-                     ResourceHob->ResourceLength,
-                     CacheWriteBack
-                     );
-          if (EFI_ERROR(Status)) {
-            return Status;
+        case EFI_RESOURCE_SYSTEM_MEMORY:
+          if (((ResourceHob->ResourceAttribute & MEMORY_ATTRIBUTE_MASK) == TESTED_MEMORY_ATTRIBUTES) ||
+              ((ResourceHob->ResourceAttribute & MEMORY_ATTRIBUTE_MASK) == INITIALIZED_MEMORY_ATTRIBUTES))
+          {
+            DEBUG ((DEBUG_INFO, "MTRR Checking 0x%lx 0x%lx\n", ResourceHob->PhysicalStart, ResourceHob->ResourceLength));
+            Status = TestPointCheckCacheType (
+                       Mtrrs,
+                       VariableMtrr,
+                       ResourceHob->PhysicalStart,
+                       ResourceHob->ResourceLength,
+                       CacheWriteBack
+                       );
+            if (EFI_ERROR (Status)) {
+              return Status;
+            }
           }
-        }
-        break;
-      default:
-        break;
+
+          break;
+        default:
+          break;
       }
     }
   }
@@ -110,7 +112,7 @@ TestPointCheckMtrrForDxe (
 
 EFI_STATUS
 TestPointCheckMtrr (
-  IN BOOLEAN   IsForDxe
+  IN BOOLEAN  IsForDxe
   )
 {
   EFI_STATUS     Status;
@@ -132,24 +134,26 @@ TestPointCheckMtrr (
 
   VariableMtrrCount = GetVariableMtrrCount ();
   for (Index = 0; Index < VariableMtrrCount; Index++) {
-    DEBUG ((DEBUG_INFO, "Variable MTRR[%02d]: Base=%016lx Mask=%016lx\n",
+    DEBUG ((
+      DEBUG_INFO,
+      "Variable MTRR[%02d]: Base=%016lx Mask=%016lx\n",
       Index,
       Mtrrs->Variables.Mtrr[Index].Base,
       Mtrrs->Variables.Mtrr[Index].Mask
       ));
   }
+
   DEBUG ((DEBUG_INFO, "\n"));
   DEBUG ((DEBUG_INFO, "==== TestPointCheckMtrr - Exit\n"));
-  
+
   //
   // Check Mask
   //
   Status = TestPointCheckMtrrMask (Mtrrs);
-  if (EFI_ERROR(Status)) {
+  if (EFI_ERROR (Status)) {
     Result = FALSE;
   } else {
-
-    ZeroMem (VariableMtrr, sizeof(VariableMtrr));
+    ZeroMem (VariableMtrr, sizeof (VariableMtrr));
     TestPointMtrrConvert (Mtrrs, VariableMtrr);
 
     if (IsForDxe) {
@@ -157,7 +161,8 @@ TestPointCheckMtrr (
     } else {
       Status = TestPointCheckMtrrForPei (Mtrrs, VariableMtrr);
     }
-    if (EFI_ERROR(Status)) {
+
+    if (EFI_ERROR (Status)) {
       Result = FALSE;
     } else {
       Result = TRUE;
@@ -170,16 +175,16 @@ TestPointCheckMtrr (
         PLATFORM_TEST_POINT_ROLE_PLATFORM_IBV,
         TEST_POINT_IMPLEMENTATION_ID_PLATFORM_PEI,
         TEST_POINT_BYTE2_END_OF_PEI_MTRR_FUNCTIONAL_ERROR_CODE \
-          TEST_POINT_END_OF_PEI \
-          TEST_POINT_BYTE2_END_OF_PEI_MTRR_FUNCTIONAL_ERROR_STRING
+        TEST_POINT_END_OF_PEI \
+        TEST_POINT_BYTE2_END_OF_PEI_MTRR_FUNCTIONAL_ERROR_STRING
         );
     } else {
       TestPointLibAppendErrorString (
         PLATFORM_TEST_POINT_ROLE_PLATFORM_IBV,
         TEST_POINT_IMPLEMENTATION_ID_PLATFORM_PEI,
         TEST_POINT_BYTE1_MEMORY_DISCOVERED_MTRR_FUNCTIONAL_ERROR_CODE \
-          TEST_POINT_MEMORY_DISCOVERED \
-          TEST_POINT_BYTE1_MEMORY_DISCOVERED_MTRR_FUNCTIONAL_ERROR_STRING
+        TEST_POINT_MEMORY_DISCOVERED \
+        TEST_POINT_BYTE1_MEMORY_DISCOVERED_MTRR_FUNCTIONAL_ERROR_STRING
         );
     }
   }

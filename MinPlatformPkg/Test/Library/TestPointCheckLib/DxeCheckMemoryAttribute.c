@@ -20,20 +20,20 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 #include <Protocol/Runtime.h>
 
 CHAR8 *
-ShortNameOfMemoryType(
-  IN UINT32 Type
+ShortNameOfMemoryType (
+  IN UINT32  Type
   );
 
 VOID
 TestPointDumpMemoryAttributesTable (
-  IN EFI_MEMORY_ATTRIBUTES_TABLE                     *MemoryAttributesTable
+  IN EFI_MEMORY_ATTRIBUTES_TABLE  *MemoryAttributesTable
   )
 {
-  UINTN                 Index;
-  EFI_MEMORY_DESCRIPTOR *Entry;
-  UINT64                Pages[EfiMaxMemoryType];
+  UINTN                  Index;
+  EFI_MEMORY_DESCRIPTOR  *Entry;
+  UINT64                 Pages[EfiMaxMemoryType];
 
-  ZeroMem (Pages, sizeof(Pages));
+  ZeroMem (Pages, sizeof (Pages));
 
   DEBUG ((DEBUG_INFO, "MemoryAttributesTable:"));
   DEBUG ((DEBUG_INFO, " Version=0x%x", MemoryAttributesTable->Version));
@@ -42,47 +42,51 @@ TestPointDumpMemoryAttributesTable (
   Entry = (EFI_MEMORY_DESCRIPTOR *)(MemoryAttributesTable + 1);
   DEBUG ((DEBUG_INFO, "Type       Start            End              # Pages          Attributes\n"));
   for (Index = 0; Index < MemoryAttributesTable->NumberOfEntries; Index++) {
-    DEBUG ((DEBUG_INFO, ShortNameOfMemoryType(Entry->Type)));
-    DEBUG ((DEBUG_INFO, " %016LX-%016LX %016LX %016LX\n",
+    DEBUG ((DEBUG_INFO, ShortNameOfMemoryType (Entry->Type)));
+    DEBUG ((
+      DEBUG_INFO,
+      " %016LX-%016LX %016LX %016LX\n",
       Entry->PhysicalStart,
-      Entry->PhysicalStart+MultU64x64 (SIZE_4KB,Entry->NumberOfPages) - 1,
+      Entry->PhysicalStart+MultU64x64 (SIZE_4KB, Entry->NumberOfPages) - 1,
       Entry->NumberOfPages,
       Entry->Attribute
       ));
     if (Entry->Type < EfiMaxMemoryType) {
       Pages[Entry->Type] += Entry->NumberOfPages;
     }
+
     Entry = NEXT_MEMORY_DESCRIPTOR (Entry, MemoryAttributesTable->DescriptorSize);
   }
-  
+
   DEBUG ((DEBUG_INFO, "\n"));
-  DEBUG ((DEBUG_INFO, "  RT_Code   : %14ld Pages (%ld Bytes)\n", Pages[EfiRuntimeServicesCode],     MultU64x64(SIZE_4KB, Pages[EfiRuntimeServicesCode])));
-  DEBUG ((DEBUG_INFO, "  RT_Data   : %14ld Pages (%ld Bytes)\n", Pages[EfiRuntimeServicesData],     MultU64x64(SIZE_4KB, Pages[EfiRuntimeServicesData])));
+  DEBUG ((DEBUG_INFO, "  RT_Code   : %14ld Pages (%ld Bytes)\n", Pages[EfiRuntimeServicesCode], MultU64x64 (SIZE_4KB, Pages[EfiRuntimeServicesCode])));
+  DEBUG ((DEBUG_INFO, "  RT_Data   : %14ld Pages (%ld Bytes)\n", Pages[EfiRuntimeServicesData], MultU64x64 (SIZE_4KB, Pages[EfiRuntimeServicesData])));
   DEBUG ((DEBUG_INFO, "              -------------- \n"));
 }
 
 EFI_STATUS
 TestPointCheckMemoryAttribute (
-  IN EFI_MEMORY_ATTRIBUTES_TABLE     *MemoryAttributesTable,
-  IN EFI_PHYSICAL_ADDRESS            Base,
-  IN UINT64                          Size,
-  IN BOOLEAN                         IsCode,
-  IN BOOLEAN                         IsFromMm
+  IN EFI_MEMORY_ATTRIBUTES_TABLE  *MemoryAttributesTable,
+  IN EFI_PHYSICAL_ADDRESS         Base,
+  IN UINT64                       Size,
+  IN BOOLEAN                      IsCode,
+  IN BOOLEAN                      IsFromMm
   )
 {
-  UINTN                 Index;
-  EFI_MEMORY_DESCRIPTOR *Entry;
-  
+  UINTN                  Index;
+  EFI_MEMORY_DESCRIPTOR  *Entry;
+
   DEBUG ((DEBUG_ERROR, "Attribute Checking 0x%lx - 0x%lx\n", Base, Size));
   Entry = (EFI_MEMORY_DESCRIPTOR *)(MemoryAttributesTable + 1);
   for (Index = 0; Index < MemoryAttributesTable->NumberOfEntries; Index++) {
-    if (Base >= Entry->PhysicalStart && Base+Size <= Entry->PhysicalStart+MultU64x64 (SIZE_4KB,Entry->NumberOfPages)) {
+    if ((Base >= Entry->PhysicalStart) && (Base+Size <= Entry->PhysicalStart+MultU64x64 (SIZE_4KB, Entry->NumberOfPages))) {
       if (IsFromMm) {
         if (IsCode) {
           if (Entry->Type != EfiRuntimeServicesCode) {
             DEBUG ((DEBUG_ERROR, "Invalid Entry->Type %d\n", Entry->Type));
             return EFI_INVALID_PARAMETER;
           }
+
           if ((Entry->Attribute & (EFI_MEMORY_RO | EFI_MEMORY_XP)) != EFI_MEMORY_RO) {
             DEBUG ((DEBUG_ERROR, "Invalid Code Entry->Attribute 0x%lx\n", Entry->Attribute));
             return EFI_INVALID_PARAMETER;
@@ -92,6 +96,7 @@ TestPointCheckMemoryAttribute (
             DEBUG ((DEBUG_ERROR, "Invalid Entry->Type %d\n", Entry->Type));
             return EFI_INVALID_PARAMETER;
           }
+
           if ((Entry->Attribute & (EFI_MEMORY_RO | EFI_MEMORY_XP)) != EFI_MEMORY_XP) {
             DEBUG ((DEBUG_ERROR, "Invalid Data Entry->Attribute 0x%lx\n", Entry->Attribute));
             return EFI_INVALID_PARAMETER;
@@ -102,6 +107,7 @@ TestPointCheckMemoryAttribute (
           DEBUG ((DEBUG_ERROR, "Invalid Entry->Type %d\n", Entry->Type));
           return EFI_INVALID_PARAMETER;
         }
+
         if (IsCode) {
           if ((Entry->Attribute & (EFI_MEMORY_RO | EFI_MEMORY_XP)) != EFI_MEMORY_RO) {
             DEBUG ((DEBUG_ERROR, "Invalid Code Entry->Attribute 0x%lx\n", Entry->Attribute));
@@ -122,10 +128,10 @@ TestPointCheckMemoryAttribute (
 
 EFI_STATUS
 TestPointCheckImageMemoryAttribute (
-  IN EFI_MEMORY_ATTRIBUTES_TABLE     *MemoryAttributesTable,
-  IN EFI_PHYSICAL_ADDRESS            ImageBase,
-  IN UINT64                          ImageSize,
-  IN BOOLEAN                         IsFromMm
+  IN EFI_MEMORY_ATTRIBUTES_TABLE  *MemoryAttributesTable,
+  IN EFI_PHYSICAL_ADDRESS         ImageBase,
+  IN UINT64                       ImageSize,
+  IN BOOLEAN                      IsFromMm
   )
 {
   EFI_STATUS                           Status;
@@ -154,51 +160,52 @@ TestPointCheckImageMemoryAttribute (
   //
   // Check PE/COFF image
   //
-  DosHdr = (EFI_IMAGE_DOS_HEADER *) (UINTN) ImageAddress;
+  DosHdr             = (EFI_IMAGE_DOS_HEADER *)(UINTN)ImageAddress;
   PeCoffHeaderOffset = 0;
   if (DosHdr->e_magic == EFI_IMAGE_DOS_SIGNATURE) {
     PeCoffHeaderOffset = DosHdr->e_lfanew;
   }
 
-  Hdr.Pe32 = (EFI_IMAGE_NT_HEADERS32 *)((UINT8 *) (UINTN) ImageAddress + PeCoffHeaderOffset);
+  Hdr.Pe32 = (EFI_IMAGE_NT_HEADERS32 *)((UINT8 *)(UINTN)ImageAddress + PeCoffHeaderOffset);
   if (Hdr.Pe32->Signature != EFI_IMAGE_NT_SIGNATURE) {
     DEBUG ((EFI_D_INFO, "Hdr.Pe32->Signature invalid - 0x%x\n", Hdr.Pe32->Signature));
     return EFI_INVALID_PARAMETER;
   }
-  
+
   //
   // Measuring PE/COFF Image Header;
   // But CheckSum field and SECURITY data directory (certificate) are excluded
   //
-  if (Hdr.Pe32->FileHeader.Machine == IMAGE_FILE_MACHINE_IA64 && Hdr.Pe32->OptionalHeader.Magic == EFI_IMAGE_NT_OPTIONAL_HDR32_MAGIC) {
+  if ((Hdr.Pe32->FileHeader.Machine == IMAGE_FILE_MACHINE_IA64) && (Hdr.Pe32->OptionalHeader.Magic == EFI_IMAGE_NT_OPTIONAL_HDR32_MAGIC)) {
     //
-    // NOTE: Some versions of Linux ELILO for Itanium have an incorrect magic value 
+    // NOTE: Some versions of Linux ELILO for Itanium have an incorrect magic value
     //       in the PE/COFF Header.
     //
-    SectionAlignment  = Hdr.Pe32->OptionalHeader.SectionAlignment;
+    SectionAlignment = Hdr.Pe32->OptionalHeader.SectionAlignment;
   } else {
     //
     // Get the section alignment value from the PE/COFF Optional Header
     //
-    SectionAlignment  = Hdr.Pe32Plus->OptionalHeader.SectionAlignment;
+    SectionAlignment = Hdr.Pe32Plus->OptionalHeader.SectionAlignment;
   }
 
   if ((SectionAlignment & (RUNTIME_PAGE_ALLOCATION_GRANULARITY - 1)) != 0) {
     DEBUG ((EFI_D_INFO, "!!!!!!!!  RecordImageMemoryMap - Section Alignment(0x%x) is not %dK  !!!!!!!!\n", SectionAlignment, RUNTIME_PAGE_ALLOCATION_GRANULARITY >> 10));
-    PdbPointer = PeCoffLoaderGetPdbPointer ((VOID*) (UINTN) ImageAddress);
+    PdbPointer = PeCoffLoaderGetPdbPointer ((VOID *)(UINTN)ImageAddress);
     if (PdbPointer != NULL) {
       DEBUG ((EFI_D_INFO, "!!!!!!!!  Image - %a  !!!!!!!!\n", PdbPointer));
     }
+
     return EFI_INVALID_PARAMETER;
   }
 
-  Section = (EFI_IMAGE_SECTION_HEADER *) (
-               (UINT8 *) (UINTN) ImageAddress +
-               PeCoffHeaderOffset +
-               sizeof(UINT32) +
-               sizeof(EFI_IMAGE_FILE_HEADER) +
-               Hdr.Pe32->FileHeader.SizeOfOptionalHeader
-               );
+  Section = (EFI_IMAGE_SECTION_HEADER *)(
+                                         (UINT8 *)(UINTN)ImageAddress +
+                                         PeCoffHeaderOffset +
+                                         sizeof (UINT32) +
+                                         sizeof (EFI_IMAGE_FILE_HEADER) +
+                                         Hdr.Pe32->FileHeader.SizeOfOptionalHeader
+                                         );
 
   Status = TestPointCheckMemoryAttribute (
              MemoryAttributesTable,
@@ -207,7 +214,7 @@ TestPointCheckImageMemoryAttribute (
              FALSE,
              IsFromMm
              );
-  if (EFI_ERROR(Status)) {
+  if (EFI_ERROR (Status)) {
     ReturnStatus = Status;
   }
 
@@ -225,7 +232,7 @@ TestPointCheckImageMemoryAttribute (
       Name[6],
       Name[7]
       ));
-      
+
     DEBUG ((EFI_D_INFO, "    VirtualSize          - 0x%08x\n", Section[Index].Misc.VirtualSize));
     DEBUG ((EFI_D_INFO, "    VirtualAddress       - 0x%08x\n", Section[Index].VirtualAddress));
     DEBUG ((EFI_D_INFO, "    SizeOfRawData        - 0x%08x\n", Section[Index].SizeOfRawData));
@@ -258,7 +265,8 @@ TestPointCheckImageMemoryAttribute (
                  IsFromMm
                  );
     }
-    if (EFI_ERROR(Status)) {
+
+    if (EFI_ERROR (Status)) {
       ReturnStatus = Status;
     }
   }
@@ -268,7 +276,7 @@ TestPointCheckImageMemoryAttribute (
 
 EFI_STATUS
 TestPointCheckUefiMemoryAttributesTable (
-  IN EFI_MEMORY_ATTRIBUTES_TABLE                     *MemoryAttributesTable
+  IN EFI_MEMORY_ATTRIBUTES_TABLE  *MemoryAttributesTable
   )
 {
   EFI_STATUS                 Status;
@@ -289,13 +297,13 @@ TestPointCheckUefiMemoryAttributesTable (
   ReturnStatus = EFI_SUCCESS;
   for (Link = RuntimeArch->ImageHead.ForwardLink; Link != &(RuntimeArch->ImageHead); Link = Link->ForwardLink) {
     RuntimeImage = BASE_CR (Link, EFI_RUNTIME_IMAGE_ENTRY, Link);
-    Status = TestPointCheckImageMemoryAttribute (
-               MemoryAttributesTable,
-               (EFI_PHYSICAL_ADDRESS)(UINTN)RuntimeImage->ImageBase,
-               RuntimeImage->ImageSize,
-               FALSE
-               );
-    if (EFI_ERROR(Status)) {
+    Status       = TestPointCheckImageMemoryAttribute (
+                     MemoryAttributesTable,
+                     (EFI_PHYSICAL_ADDRESS)(UINTN)RuntimeImage->ImageBase,
+                     RuntimeImage->ImageSize,
+                     FALSE
+                     );
+    if (EFI_ERROR (Status)) {
       ReturnStatus = Status;
     }
   }
@@ -310,12 +318,12 @@ TestPointCheckUefiMemAttribute (
 {
   EFI_STATUS  Status;
   VOID        *MemoryAttributesTable;
-  
+
   DEBUG ((DEBUG_INFO, "==== TestPointCheckUefiMemAttribute - Enter\n"));
   Status = EfiGetSystemConfigurationTable (&gEfiMemoryAttributesTableGuid, (VOID **)&MemoryAttributesTable);
   if (!EFI_ERROR (Status)) {
-    TestPointDumpMemoryAttributesTable(MemoryAttributesTable);
-    Status = TestPointCheckUefiMemoryAttributesTable(MemoryAttributesTable);
+    TestPointDumpMemoryAttributesTable (MemoryAttributesTable);
+    Status = TestPointCheckUefiMemoryAttributesTable (MemoryAttributesTable);
   }
 
   if (EFI_ERROR (Status)) {
@@ -323,10 +331,11 @@ TestPointCheckUefiMemAttribute (
       PLATFORM_TEST_POINT_ROLE_PLATFORM_IBV,
       TEST_POINT_IMPLEMENTATION_ID_PLATFORM_DXE,
       TEST_POINT_BYTE4_READY_TO_BOOT_UEFI_MEMORY_ATTRIBUTE_TABLE_FUNCTIONAL_ERROR_CODE \
-        TEST_POINT_READY_TO_BOOT \
-        TEST_POINT_BYTE4_READY_TO_BOOT_UEFI_MEMORY_ATTRIBUTE_TABLE_FUNCTIONAL_ERROR_STRING
+      TEST_POINT_READY_TO_BOOT \
+      TEST_POINT_BYTE4_READY_TO_BOOT_UEFI_MEMORY_ATTRIBUTE_TABLE_FUNCTIONAL_ERROR_STRING
       );
   }
+
   DEBUG ((DEBUG_INFO, "==== TestPointCheckUefiMemAttribute - Exit\n"));
 
   return Status;

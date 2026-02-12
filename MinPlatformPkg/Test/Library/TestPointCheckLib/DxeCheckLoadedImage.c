@@ -26,29 +26,29 @@ TestPointCheckLoadedImage (
   VOID
   )
 {
-  EFI_STATUS                             Status;
-  EFI_LOADED_IMAGE_PROTOCOL              *LoadedImage;
-  UINTN                                  Index;
-  EFI_HANDLE                             *HandleBuf;
-  UINTN                                  HandleCount;
-  EFI_DEVICE_PATH_PROTOCOL               *DevicePath;
-  EFI_DEVICE_PATH_PROTOCOL               *LoadedImageDevicePath;
-  EFI_STATUS                             ReturnStatus;
-  
+  EFI_STATUS                 Status;
+  EFI_LOADED_IMAGE_PROTOCOL  *LoadedImage;
+  UINTN                      Index;
+  EFI_HANDLE                 *HandleBuf;
+  UINTN                      HandleCount;
+  EFI_DEVICE_PATH_PROTOCOL   *DevicePath;
+  EFI_DEVICE_PATH_PROTOCOL   *LoadedImageDevicePath;
+  EFI_STATUS                 ReturnStatus;
+
   ReturnStatus = EFI_SUCCESS;
   DEBUG ((DEBUG_INFO, "==== TestPointCheckLoadedImage - Enter\n"));
   HandleBuf = NULL;
-  Status = gBS->LocateHandleBuffer (
-                  ByProtocol,
-                  &gEfiLoadedImageProtocolGuid,
-                  NULL,
-                  &HandleCount,
-                  &HandleBuf
-                  );
+  Status    = gBS->LocateHandleBuffer (
+                     ByProtocol,
+                     &gEfiLoadedImageProtocolGuid,
+                     NULL,
+                     &HandleCount,
+                     &HandleBuf
+                     );
   if (EFI_ERROR (Status)) {
-    goto Done ;
+    goto Done;
   }
-  
+
   DEBUG ((DEBUG_INFO, "LoadedImage (%d):\n", HandleCount));
   for (Index = 0; Index < HandleCount; Index++) {
     Status = gBS->HandleProtocol (
@@ -56,32 +56,32 @@ TestPointCheckLoadedImage (
                     &gEfiLoadedImageProtocolGuid,
                     (VOID **)&LoadedImage
                     );
-    if (EFI_ERROR(Status)) {
+    if (EFI_ERROR (Status)) {
       continue;
     }
 
     Status = gBS->HandleProtocol (LoadedImage->DeviceHandle, &gEfiDevicePathProtocolGuid, (VOID **)&DevicePath);
-    if (EFI_ERROR(Status)) {
+    if (EFI_ERROR (Status)) {
       DevicePath = NULL;
     }
 
     Status = gBS->HandleProtocol (HandleBuf[Index], &gEfiLoadedImageDevicePathProtocolGuid, (VOID **)&LoadedImageDevicePath);
-    if (EFI_ERROR(Status)) {
+    if (EFI_ERROR (Status)) {
       LoadedImageDevicePath = NULL;
     }
 
     DumpLoadedImage (Index, LoadedImage, DevicePath, LoadedImageDevicePath);
 
     Status = TestPointCheckNon3rdPartyImage (LoadedImage, DevicePath, LoadedImageDevicePath);
-    if (EFI_ERROR(Status)) {
+    if (EFI_ERROR (Status)) {
       ReturnStatus = Status;
       DEBUG ((DEBUG_ERROR, "3rd Party Image found - Index (%d)\n", Index));
       TestPointLibAppendErrorString (
         PLATFORM_TEST_POINT_ROLE_PLATFORM_IBV,
         TEST_POINT_IMPLEMENTATION_ID_PLATFORM_DXE,
         TEST_POINT_BYTE3_END_OF_DXE_NO_THIRD_PARTY_PCI_OPTION_ROM_ERROR_CODE \
-          TEST_POINT_END_OF_DXE \
-          TEST_POINT_BYTE3_END_OF_DXE_NO_THIRD_PARTY_PCI_OPTION_ROM_ERROR_STRING
+        TEST_POINT_END_OF_DXE \
+        TEST_POINT_BYTE3_END_OF_DXE_NO_THIRD_PARTY_PCI_OPTION_ROM_ERROR_STRING
         );
     }
   }

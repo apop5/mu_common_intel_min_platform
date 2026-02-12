@@ -17,11 +17,11 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 // MU_CHANGE - BEGIN - TCBZ3541
 #pragma pack(1)
 
- typedef struct EXEMPT_DEVICE_STRUCT {
-  UINT8 Segment;
-  UINT8 Bus;
-  UINT8 Device;
-  UINT8 Function;
+typedef struct EXEMPT_DEVICE_STRUCT {
+  UINT8    Segment;
+  UINT8    Bus;
+  UINT8    Device;
+  UINT8    Function;
 } EXEMPT_DEVICE;
 
 #pragma pack()
@@ -43,9 +43,10 @@ TestPointCheckPciBusMaster (
   EFI_STATUS        Status;
   PCI_SEGMENT_INFO  *PciSegmentInfo;
   // MU_CHANGE - BEGIN - TCBZ3541
-  EXEMPT_DEVICE     *ExemptDevicePcdPtr;
-  BOOLEAN           ExemptDeviceFound;
-  UINTN             Index;
+  EXEMPT_DEVICE  *ExemptDevicePcdPtr;
+  BOOLEAN        ExemptDeviceFound;
+  UINTN          Index;
+
   // MU_CHANGE - END - TCBZ3541
 
   PciSegmentInfo = GetPciSegmentInfo (&SegmentCount);
@@ -65,13 +66,14 @@ TestPointCheckPciBusMaster (
           // the platform to define these devices and do not record errors
           // for these devices.
           //
-          ExemptDevicePcdPtr = (EXEMPT_DEVICE *) PcdGetPtr (PcdTestPointIbvPlatformExemptPciBme);
-          ExemptDeviceFound = FALSE;
+          ExemptDevicePcdPtr = (EXEMPT_DEVICE *)PcdGetPtr (PcdTestPointIbvPlatformExemptPciBme);
+          ExemptDeviceFound  = FALSE;
           for (Index = 0; Index < (PcdGetSize (PcdTestPointIbvPlatformExemptPciBme) / sizeof (EXEMPT_DEVICE)); Index++) {
-            if (Segment == ExemptDevicePcdPtr[Index].Segment
-                && Bus == ExemptDevicePcdPtr[Index].Bus
-                && Device == ExemptDevicePcdPtr[Index].Device
-                && Function == ExemptDevicePcdPtr[Index].Function) {
+            if (  (Segment == ExemptDevicePcdPtr[Index].Segment)
+               && (Bus == ExemptDevicePcdPtr[Index].Bus)
+               && (Device == ExemptDevicePcdPtr[Index].Device)
+               && (Function == ExemptDevicePcdPtr[Index].Function))
+            {
               ExemptDeviceFound = TRUE;
             }
           }
@@ -79,9 +81,10 @@ TestPointCheckPciBusMaster (
           if (ExemptDeviceFound) {
             continue;
           }
+
           // MU_CHANGE - END - TCBZ3541
 
-          VendorId = PciSegmentRead16 (PCI_SEGMENT_LIB_ADDRESS(PciSegmentInfo[Segment].SegmentNumber, Bus, Device, Function, PCI_VENDOR_ID_OFFSET));
+          VendorId = PciSegmentRead16 (PCI_SEGMENT_LIB_ADDRESS (PciSegmentInfo[Segment].SegmentNumber, Bus, Device, Function, PCI_VENDOR_ID_OFFSET));
           //
           // If VendorId = 0xffff, there does not exist a device at this
           // location. For each device, if there is any function on it,
@@ -89,20 +92,20 @@ TestPointCheckPciBusMaster (
           // will be no more functions in the same device, so we can break
           // loop to deal with the next device.
           //
-          if (VendorId == 0xffff && Function == 0) {
+          if ((VendorId == 0xffff) && (Function == 0)) {
             break;
           }
 
           if (VendorId != 0xffff) {
-            Command = PciSegmentRead16 (PCI_SEGMENT_LIB_ADDRESS(Segment, Bus, Device, Function, PCI_COMMAND_OFFSET));
+            Command = PciSegmentRead16 (PCI_SEGMENT_LIB_ADDRESS (Segment, Bus, Device, Function, PCI_COMMAND_OFFSET));
             if ((Command & EFI_PCI_COMMAND_BUS_MASTER) != 0) {
               DEBUG ((DEBUG_INFO, "PCI BME enabled (S%04x.B%02x.D%02x.F%x - %04x)\n", Segment, Bus, Device, Function, Command));
               TestPointLibAppendErrorString (
                 PLATFORM_TEST_POINT_ROLE_PLATFORM_IBV,
                 TEST_POINT_IMPLEMENTATION_ID_PLATFORM_PEI,
                 TEST_POINT_BYTE2_END_OF_PEI_PCI_BUS_MASTER_DISABLED_ERROR_CODE \
-                  TEST_POINT_END_OF_PEI \
-                  TEST_POINT_BYTE2_END_OF_PEI_PCI_BUS_MASTER_DISABLED_ERROR_STRING
+                TEST_POINT_END_OF_PEI \
+                TEST_POINT_BYTE2_END_OF_PEI_PCI_BUS_MASTER_DISABLED_ERROR_STRING
                 );
               Status = EFI_INVALID_PARAMETER;
             }
@@ -111,8 +114,8 @@ TestPointCheckPciBusMaster (
             // If this is not a multi-function device, we can leave the loop
             // to deal with the next device.
             //
-            HeaderType = PciSegmentRead8 (PCI_SEGMENT_LIB_ADDRESS(Segment, Bus, Device, Function, PCI_HEADER_TYPE_OFFSET));
-            if (Function == 0 && ((HeaderType & HEADER_TYPE_MULTI_FUNCTION) == 0x00)) {
+            HeaderType = PciSegmentRead8 (PCI_SEGMENT_LIB_ADDRESS (Segment, Bus, Device, Function, PCI_HEADER_TYPE_OFFSET));
+            if ((Function == 0) && ((HeaderType & HEADER_TYPE_MULTI_FUNCTION) == 0x00)) {
               break;
             }
           }

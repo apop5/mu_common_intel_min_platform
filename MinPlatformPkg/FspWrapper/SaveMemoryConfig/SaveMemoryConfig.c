@@ -25,7 +25,8 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 #include <Library/VariableWriteLib.h>
 #include <Guid/FspNonVolatileStorageHob2.h>
 
-//MU_CHANGE - Remove variables created by previous versions of this driver.
+// MU_CHANGE - Remove variables created by previous versions of this driver.
+
 /**
   Remove variables created by previous versions of this driver.
 
@@ -36,20 +37,21 @@ DeleteObsoleteVariables (
   VOID
   )
 {
-  EFI_STATUS Status;
-  UINTN      BufferSize;
+  EFI_STATUS  Status;
+  UINTN       BufferSize;
 
   BufferSize = 0;
-  Status = GetLargeVariable(L"MemoryConfig", &gFspNonVolatileStorageHobGuid, &BufferSize, NULL);
+  Status     = GetLargeVariable (L"MemoryConfig", &gFspNonVolatileStorageHobGuid, &BufferSize, NULL);
   if (Status == EFI_BUFFER_TOO_SMALL) {
-    //Old variable exists; remove it.
-    Status = SetLargeVariable(L"MemoryConfig", &gFspNonVolatileStorageHobGuid, FALSE, 0, NULL);
+    // Old variable exists; remove it.
+    Status = SetLargeVariable (L"MemoryConfig", &gFspNonVolatileStorageHobGuid, FALSE, 0, NULL);
     ASSERT_EFI_ERROR (Status); // Error here is unexpected but non-fatal, assert for debug.
   } else if (Status != EFI_NOT_FOUND) {
     ASSERT_EFI_ERROR (Status); // Error status other than EFI_NOT_FOUND is unexpected but non-fatal, assert for debug.
   }
 }
-//MU_CHANGE - End
+
+// MU_CHANGE - End
 
 /**
   This is the standard EFI driver point that detects whether there is a
@@ -63,8 +65,8 @@ DeleteObsoleteVariables (
 EFI_STATUS
 EFIAPI
 SaveMemoryConfigEntryPoint (
-  IN EFI_HANDLE         ImageHandle,
-  IN EFI_SYSTEM_TABLE   *SystemTable
+  IN EFI_HANDLE        ImageHandle,
+  IN EFI_SYSTEM_TABLE  *SystemTable
   )
 {
   EFI_STATUS         Status;
@@ -88,7 +90,7 @@ SaveMemoryConfigEntryPoint (
   CompressedSize            = 0;
   CompressedAllocationPages = 0;
 
-  DeleteObsoleteVariables (); //MU_CHANGE: attempt to remove variables created by previous versions of this driver.
+  DeleteObsoleteVariables (); // MU_CHANGE: attempt to remove variables created by previous versions of this driver.
 
   //
   // Search for the Memory Configuration GUID HOB.  If it is not present, then
@@ -97,8 +99,8 @@ SaveMemoryConfigEntryPoint (
   //
   GuidHob = GetFirstGuidHob (&gFspNonVolatileStorageHob2Guid);
   if (GuidHob != NULL) {
-    HobData = (VOID *) (UINTN) ((FSP_NON_VOLATILE_STORAGE_HOB2 *) (UINTN) GuidHob)->NvsDataPtr;
-    DataSize = (UINTN) ((FSP_NON_VOLATILE_STORAGE_HOB2 *) (UINTN) GuidHob)->NvsDataLength;
+    HobData  = (VOID *)(UINTN)((FSP_NON_VOLATILE_STORAGE_HOB2 *)(UINTN)GuidHob)->NvsDataPtr;
+    DataSize = (UINTN)((FSP_NON_VOLATILE_STORAGE_HOB2 *)(UINTN)GuidHob)->NvsDataLength;
   } else {
     //
     // Fall back to version1 FspNvsHob
@@ -151,7 +153,7 @@ SaveMemoryConfigEntryPoint (
               //
               // No need to update Variable, only lock it.
               //
-              Status = LockLargeVariable (L"FspNvsBuffer",  &gFspNvsBufferVariableGuid);
+              Status = LockLargeVariable (L"FspNvsBuffer", &gFspNvsBufferVariableGuid);
               if (EFI_ERROR (Status)) {
                 //
                 // Fail to lock variable is security vulnerability and should not happen.
@@ -162,25 +164,28 @@ SaveMemoryConfigEntryPoint (
                 //
                 DEBUG ((DEBUG_ERROR, "Delete variable!\n"));
                 DataSize = 0;
-                Status = SetLargeVariable (L"FspNvsBuffer", &gFspNvsBufferVariableGuid, FALSE, DataSize, HobData);
+                Status   = SetLargeVariable (L"FspNvsBuffer", &gFspNvsBufferVariableGuid, FALSE, DataSize, HobData);
                 ASSERT_EFI_ERROR (Status);
               }
             }
+
             FreePool (VariableData);
           }
         }
       }
+
       Status = EFI_SUCCESS;
 
       if (!DataIsIdentical) {
-        //MU_CHANGE: Delete the variable first to allow reclaim of its space for the new version if needed.
+        // MU_CHANGE: Delete the variable first to allow reclaim of its space for the new version if needed.
         Status = SetLargeVariable (L"FspNvsBuffer", &gFspNvsBufferVariableGuid, FALSE, 0, NULL);
         // Delete failure is unexpected, so assert; but proceed to attempt SetVariable anyway if failure occurs in
         // a build without ASSERT_EFI_ERROR hang.
         if (EFI_ERROR (Status) && (Status != EFI_NOT_FOUND)) {
           ASSERT_EFI_ERROR (Status);
         }
-        //MU_CHANGE: End
+
+        // MU_CHANGE: End
 
         Status = SetLargeVariable (L"FspNvsBuffer", &gFspNvsBufferVariableGuid, TRUE, DataSize, HobData);
         if (Status == EFI_ABORTED) {
@@ -193,8 +198,9 @@ SaveMemoryConfigEntryPoint (
           //
           DEBUG ((DEBUG_ERROR, "Delete variable!\n"));
           DataSize = 0;
-          Status = SetLargeVariable (L"FspNvsBuffer", &gFspNvsBufferVariableGuid, FALSE, DataSize, HobData);
+          Status   = SetLargeVariable (L"FspNvsBuffer", &gFspNvsBufferVariableGuid, FALSE, DataSize, HobData);
         }
+
         ASSERT_EFI_ERROR (Status);
         DEBUG ((DEBUG_INFO, "Saved size of FSP / MRC Training Data: 0x%x\n", DataSize));
       } else {
@@ -202,7 +208,7 @@ SaveMemoryConfigEntryPoint (
       }
     }
   } else {
-    DEBUG((DEBUG_ERROR, "Memory S3 Data HOB was not found\n"));
+    DEBUG ((DEBUG_ERROR, "Memory S3 Data HOB was not found\n"));
   }
 
   if (CompressedData != NULL) {

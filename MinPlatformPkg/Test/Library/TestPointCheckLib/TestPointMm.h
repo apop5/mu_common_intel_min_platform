@@ -47,8 +47,8 @@ TestPointReadyToLockMmMemoryAttributeTableFunctional (
 **/
 EFI_STATUS
 TestPointReadyToBootMmPageProtectionHandler (
-  IN OUT VOID    *CommBuffer      OPTIONAL,
-  IN OUT UINTN   *CommBufferSize  OPTIONAL
+  IN OUT VOID   *CommBuffer      OPTIONAL,
+  IN OUT UINTN  *CommBufferSize  OPTIONAL
   );
 
 /**
